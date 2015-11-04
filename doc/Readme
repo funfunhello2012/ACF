@@ -1,1 +1,6 @@
 documentations
+1 Introduction
+2 Building
+  2.1 Dependencies
+	OpenCV
+	MATIO(http://sourceforge.net/projects/matio)

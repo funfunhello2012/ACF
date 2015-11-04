@@ -4,7 +4,7 @@
  *  Created on: 2015年11月3日
  *      Author: edison
  */
-#include "imageInOut.h"
+#include "imageIO.h"
 
 int main( int argc, char** argv ){
 	try{

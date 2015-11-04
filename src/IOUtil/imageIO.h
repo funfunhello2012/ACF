@@ -5,8 +5,8 @@
  *      Author: edison
  */
 
-#ifndef SRC_IMAGEIO_IMAGEINOUT_H_
-#define SRC_IMAGEIO_IMAGEINOUT_H_
+#ifndef SRC_IOUTIL_IMAGEIO_H_
+#define SRC_IOUTIL_IMAGEIO_H_
 
 #include <iostream>
 #include <stdexcept>
@@ -44,4 +44,4 @@ void imshow(const Mat image,const string  windowName="figure");
 
 
 
-#endif /* SRC_IMAGEIO_IMAGEINOUT_H_ */
+#endif /* SRC_IOUTIL_IMAGEIO_H_ */
