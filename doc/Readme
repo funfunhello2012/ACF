@@ -2,5 +2,7 @@ documentations
 1 Introduction
 2 Building
   2.1 Dependencies
-	OpenCV
-	MATIO(http://sourceforge.net/projects/matio)
+	2.1.1 OpenCV(2.4.10)
+	2.1.2 MATIO(http://sourceforge.net/projects/matio)
+		MATIO dependend on zlib and HDF-5(install them by apt-get)
+		build and install MATIO 
