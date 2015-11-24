@@ -1,0 +1,89 @@
+acfdetect.cpp:
+	
+输入：I detector filename
+输出：（1）I 是单张图片 bbs：[x y w h score]
+      （2）I 是多张图片 bbs数组
+（1）bbs类
+	int x， y， w， h；double score；
+     pChns类
+	int shrink //[4] integer downsampling amount for channels
+	bool pColor_enabled //[1] if true enable color channels
+	int pColor_smooth //[1] radius for image smoothing (using convTri)
+	char* pColor_colorSpace //['luv'] choices are: 'gray', 'rgb', 'hsv', 'orig'
+	bool pGradMag_enabled //[1] if true enable gradient magnitude channel
+	int pGradMag_colorChn //[0] if>0 color channel to use for grad computation
+	int pGradMag_normRad // [5] normalization radius for gradient
+	float pGradMag_normConst //[.005] normalization constant for gradient
+	bool pGradMag_full //[0] if true compute angles in [0,2*pi) else in [0,pi)
+	bool pGradHist_enabled     // [1] if true enable gradient histogram channels
+	int pGradHist_binSize      //[shrink] spatial bin size (defaults to shrink)
+	int pGradHist_nOrients     //[6] number of orientation channels
+	bool pGradHist_softBin     //[0] if true use "soft" bilinear spatial binning
+	bool pGradHist_useHog       //[0] if true perform 4-way hog normalization/clipping
+	float pGradHist_clipHog      //[.2] value at which to clip hog histogram bins
+	bool pCustom_enabled //[1] if true enable custom channel type
+	char *pCustom_name      // ['REQ'] custom channel type name
+	pCustom_hFunc        //['REQ'] function handle for computing custom channels
+	pCustom_pFunc        //[{}] additional params for chns=hFunc(I,pFunc{:})
+	pCustom_padWith      // [0] how channel should be padded (e.g. 0,'replicate')
+	bool complete     //[] if true does not check/set default vals in pChns
+     pPyramid类
+	?pChns类（可继承）
+	int nPerOct      // [8] number of scales per octave
+	int nOctUp       // [0] number of upsampled octaves to compute
+	int nApprox      //[-1] number of approx. scales (if -1 nApprox=nPerOct-1)
+	float lambdas      // [] coefficients for power law scaling (see BMVC10)
+	int(2) pad          // [0 0] amount to pad channels (along T/B and L/R)
+	int(2) minDs        // [16 16] minimum image size for channel computation
+	int smooth       //[1] radius for channel smoothing (using convTri)
+	bool concat       //[1] if true concatenate channels
+	bool complete     // [] if true does not check/set default vals in pPyramid
+     opts类
+	?pPyramid   // [{}] params for creating pyramid (see chnsPyramid)
+	?filters   // [] [wxwxnChnsxnFilter] filters or [wFilter,nFilter]
+	int(2) modelDs
+	int(2) modelDsPad
+	?pNms       // [..] params for non-maximal suppression (see bbNms.m)
+	int stride //[4]
+	int cascThr //[-1]
+	float cascCal // [.005] cascade calibration
+	int nWeak  //- [128] vector defining number weak clfs per stage
+	pBoost     // [..] parameters for boosting (see adaBoostTrain.m)
+	int seed [0] // seed for random stream (for reproducibility)
+	char *name //name to prepend to clf and log filenames
+	char *
+		posGtDir   // [''] dir containing ground truth
+		posImgDir  // [''] dir containing full positive images
+		negImgDir  // [''] dir containing full negative images
+		posWinDir  // [''] dir containing cropped positive windows
+		negWinDir  // [''] dir containing cropped negative windows
+	?imreadf    // [@imread] optional custom function for reading images
+	?imreadp    // [{}] optional custom parameters for imreadf
+	?pLoad      // [..] params for bbGt>bbLoad (see bbGt)
+	int nPos //[inf] max number of pos windows to sample
+	int nNeg //[5000] max number of neg windows to sample
+	int nPerNeg //[25]  max number of neg windows to sample per image
+	int nAccNeg    //[10000] max number of neg windows to accumulate
+	?pJitter    // params for jittering pos windows (see jitterImage)
+	bool winsSave //[0] if true save cropped windows at each stage to disk
+     ?clf类
+	fids       // [K x nWeak] feature ids for each node
+	thrs       //[K x nWeak] threshold corresponding to each fid
+	child      // [K x nWeak] index of child for each node (1-indexed)
+	hs         // [K x nWeak] log ratio (.5*log(p/(1-p)) at each node
+	weights    // [K x nWeak] total sample weight at each node
+	depth      // [K x nWeak] depth of each node
+	errs       // [1 x nWeak] error for each tree (for debugging)
+	losses     //[1 x nWeak] loss after every iteration (for debugging)
+	treeDepth  // depth of all leaf nodes (or 0 if leaf depth varies)
+     info类
+	char* name //channel type name
+	pChn对象       // exact input parameters for given channel type
+	int nChns     // number of channels for given channel type
+	padWith    - how channel should be padded (0,'replicate')
+（2）detector类
+	输入参数对象opts
+	分类器对象clf
+	通道信息对象info数组
+（2）单张图片的检测函数
+	函数bbs= acfDetectImg（I,detector）
