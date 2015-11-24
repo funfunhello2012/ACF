@@ -1,22 +1,23 @@
 /*
- * imageInOut.h
+ * IOUtil.h
  *
  *  Created on: 2015年11月3日
  *      Author: edison
  */
 
-#ifndef SRC_IOUTIL_IMAGEIO_H_
-#define SRC_IOUTIL_IMAGEIO_H_
+#ifndef SRC_UTIL_IOUTIL_H_
+#define SRC_UTIL_IOUTIL_H_
 
 #include <iostream>
 #include <stdexcept>
 #include <cv.h>
 
-namespace acf{
-
 using std::string;
 using std::invalid_argument;
 using cv::Mat;
+
+namespace acf{
+
 /********************************************************
  * read image like matlab format
  * @param filename : the image path for reading
@@ -44,4 +45,4 @@ void imshow(const Mat image,const string  windowName="figure");
 
 
 
-#endif /* SRC_IOUTIL_IMAGEIO_H_ */
+#endif /* SRC_UTIL_IOUTIL_H_ */
