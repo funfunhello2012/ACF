@@ -11,8 +11,8 @@
 
 using namespace std;
 using namespace acf;
-ACFDetector::ACFDetector() {
-	cout << "ACFDetector()" << endl;
+ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
+	cout << "ACFDetector(Builder*)" << endl;
 }
 
 ACFDetector::	~ACFDetector(){
@@ -27,7 +27,19 @@ ACFDetector::Builder::~Builder(){cout << "~Builder() " << endl;}
  */
 ACFDetector ACFDetector:: Builder::build(){
 	cout << "Build ACF Detector From Builder" << endl;
-	return ACFDetector();
+	return ACFDetector(this);
+}
+
+void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,Mat image){
+	cout << "detect image" << endl;
+}
+
+void ACFDetector::train(){
+	cout << "train a detector here " << endl;
+}
+
+void ACFDetector::test(){
+	cout << "test module here" << endl;
 }
 
 
