@@ -15,7 +15,7 @@ using namespace acf;
 
 
 int main( int argc, char** argv ){
-	ACFDetector detector = ACFDetector::Builder().build();
+//	ACFDetector detector = ACFDetector::Builder("conf/detector.conf").build();
 
 //	try{
 //		cv::Mat image;
@@ -28,8 +28,6 @@ int main( int argc, char** argv ){
 //	}
 //	return 0;
 
-
-	/*
 	mat_t *matfp;
 	matfp = Mat_Open(argv[1],MAT_ACC_RDONLY);
 	if ( NULL == matfp ) {
@@ -62,5 +60,5 @@ int main( int argc, char** argv ){
 	}
 	Mat_Close(matfp);
 	return EXIT_SUCCESS;
-	*/
+
 }

@@ -19,7 +19,7 @@ ACFDetector::	~ACFDetector(){
 	cout << "~ACFDetector()" << endl;
 }
 
-ACFDetector::Builder::Builder(){ cout << "Builder()" << endl;}
+ACFDetector::Builder::Builder(const string configFile){ cout << "Builder(config) from " << configFile << endl;}
 ACFDetector::Builder::~Builder(){cout << "~Builder() " << endl;}
 
 /**
