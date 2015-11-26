@@ -10,15 +10,15 @@
 
 #include "Channel.h"
 
-int main( int argc, char** argv )
-{
-  Mat image;
-  image = imread( "lena.jpg" );
-
-  test_channel();
-
-  waitKey(0);
-  return 0;
-}
+//int main( int argc, char** argv )
+//{
+//  Mat image;
+//  image = imread( "lena.jpg" );
+//
+//  test_channel();
+//
+//  waitKey(0);
+//  return 0;
+//}
 
 

@@ -14,7 +14,7 @@ using cv::Mat;
 using namespace acf;
 using namespace std;
 
-Mat imread(const char* filename)  throw(invalid_argument){
+Mat acf::imread(const char* filename)  throw(invalid_argument){
 	Mat image;
 	image = cv::imread(filename,CV_LOAD_IMAGE_COLOR);
 	if(!image.data){
@@ -23,11 +23,11 @@ Mat imread(const char* filename)  throw(invalid_argument){
 	return image;
 }
 
-void imwrite(const string& filename,Mat image){
+void acf::imwrite(const string& filename,Mat image){
 	cv::imwrite(filename,image);
 }
 
-void imshow(const Mat image,const string  windowName){
+void acf::imshow(const Mat image,const string  windowName){
 	cv::namedWindow(windowName,CV_WINDOW_AUTOSIZE);
 	cv::imshow(windowName,image);
 	cv::waitKey(0);
