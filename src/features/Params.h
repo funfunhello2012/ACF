@@ -8,6 +8,7 @@
 #ifndef SRC_FEATURES_PARAMS_H_
 #define SRC_FEATURES_PARAMS_H_
 
+using std::string;
 class ParamPyramid{
 private:
 	int perOct;
@@ -22,23 +23,30 @@ private:
 	int shrink;
 };
 
-class ParamChns{
+enum ChnsType{
+	Color= 1,
+	GradHist = 2,
+	GradMag = 3,
+	Custom = 4
+};
+
+class IParamChns{
 public:
-	virtual ~ParamChns(){}
+	virtual ~IParamChns(){}
+	virtual ChnsType getChnsType() = 0;
 };
 
-class ParamChnsColor:public ParamChns{
-
+class ParamChnsColor:public IParamChns{
+public:
+	ChnsType getChnsType(){return Color;}
 };
 
-class ParamChnsGrad:public ParamChns{
-
+class ParamChnsGrad:public IParamChns{
+	ChnsType getChnsType(){return GradHist;}
 };
 
-class ParamChnsMag:public ParamChns{
-
+class ParamChnsMag:public IParamChns{
+	ChnsType getChnsType(){return GradMag;}
 };
-
-
 
 #endif /* SRC_FEATURES_PARAMS_H_ */

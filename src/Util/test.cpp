@@ -9,6 +9,7 @@ extern "C"{
 #include "matio.h"
 }
 #include "../detector/ACFDetector.h"
+#include "../features/Params.h"
 
 using namespace std;
 using namespace acf;
@@ -27,6 +28,23 @@ int main( int argc, char** argv ){
 //	detector.train();
 //	detector.test();
 
+	//ParamChns test
+	vector<IParamChns*> pChannels;
+	ParamChnsColor colorChns;
+	ParamChnsGrad GradChns;
+	ParamChnsMag MagChns;
+	pChannels.push_back(&colorChns);
+	pChannels.push_back(&GradChns);
+	pChannels.push_back(&MagChns);
+
+	for(int i=0;i<pChannels.size();i++){
+		switch(pChannels[i]->getChnsType()){
+		case Color:cout <<  i <<" is Color channel" << endl;break;
+		case GradHist:cout <<  i <<" is Grad Histogram channel" << endl;break;
+		case GradMag:cout <<  i <<" is Grad Mag channel" << endl;break;
+		case Custom:cout << i << " is Custom channel" << endl;
+		}
+	}
 
 
 //	try{

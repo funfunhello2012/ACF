@@ -7,8 +7,10 @@
 
 #ifndef SRC_DETECTOR_ACFDETECTOR_H_
 #define SRC_DETECTOR_ACFDETECTOR_H_
+
 #include "../Util/Builder.h"
 #include "../Util/Util.h"
+#include "../features/Params.h"
 #include <vector>
 #include <opencv2/opencv.hpp>
 
@@ -22,9 +24,9 @@ public:
 	~ACFDetector();
 	ACFDetector(const ACFDetector& origin);
 	/****************************************
-	 *  There are two way to get detector,first one is this
-	 *  initialize ACFDetector from builder
-	 *  second one is load detector from .mat or .xml file using "Util/IOUtil"
+	 *  There are two way to get detector,
+	 *  first one is this,  initialize ACFDetector from builder
+	 *  second one is   load detector from .mat or .xml file using "Util/IOUtil"
 	 */
 	class Builder : public IBuilder<ACFDetector>{
 	public:
@@ -39,23 +41,23 @@ public:
 	void detectImg(std::vector<BoundingBox>& bbs,Mat image);
 
 private:
-//	class Opts{
-//		const Size modelDimension;
-//		const Size modelDimensionPad;
-//		int stride;
-//		int cascThr;
-//		int cascCal;
-//		const float seed;
-//		const string name;
-//		const string posImgDir;
-//		const string negImgDir;
-//		const int nPos;
-//		const int nNeg;
-//		const int nPerNeg;
-//		const int nAccNeg;
-//		ParamPyramid pPyramid;
-//		std::vector<ParamChns> pChannels;
-//	};
+	class Opts{
+		const Size modelDimension;
+		const Size modelDimensionPad;
+		int stride;
+		int cascThr;
+		int cascCal;
+		const float seed;
+		const string name;
+		const string posImgDir;
+		const string negImgDir;
+		const int nPos;
+		const int nNeg;
+		const int nPerNeg;
+		const int nAccNeg;
+		ParamPyramid pPyramid;
+		std::vector<IParamChns*> pChannels;
+	};
 
 	ACFDetector(Builder* builder);
 	ACFDetector& operator=(const ACFDetector&);//prevent the compiler to generate copying assignment
@@ -64,7 +66,3 @@ private:
 }
 
 #endif
-
-
-
-
