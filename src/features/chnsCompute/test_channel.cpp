@@ -1,6 +1,9 @@
 #include "Channel.h"
 
-void test_channel(void) {
+#if NOW_TESTING == TEST_CHANNEL
+
+int main( int argc, char** argv )
+{
 	  Mat image, image2;
 	  image = imread( "lena.jpg" );
 
@@ -14,3 +17,5 @@ void test_channel(void) {
 	  namedWindow( "Color Channel", CV_WINDOW_AUTOSIZE );
 	  imshow( "Color Channel", image2 );
 }
+
+#endif

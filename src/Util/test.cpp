@@ -77,6 +77,8 @@ void testReadShowImage(){
 		}
 }
 
+#if NOW_TESTING == TEST_ALL
+
 int main( int argc, char** argv ){
 //	testLoadUseCase();
 	testTrainTestUseCase();
@@ -118,3 +120,4 @@ int main( int argc, char** argv ){
 //	return EXIT_SUCCESS;
 
 }
+#endif
