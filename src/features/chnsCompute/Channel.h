@@ -2,14 +2,15 @@
 #pragma once
 // 这里提供了积分通道图的三种特征，可以通过继承抽象类Chn 添加自定义通道
 
-#include "common.h"
+#include "../../Util/common.h"
 
 // abstract base class
 class Chn {
 public:
-	bool 	enabled;
-	char	name[20]; // 注意，通道名称不能超过20个字符
-	
+	void setEnabled(bool e){
+		enabled = e;
+	}
+	Chn(){}
 	Chn(Mat img): enabled(true), pad(0), padType(NONE){
 		img.copyTo(this -> img);
 	}
@@ -17,13 +18,17 @@ public:
 	Mat data(){
 		return img;
 	}
+private:
+
+
+protected:
+	bool 	enabled;
+	char	name[20]; // 注意，通道名称不能超过20个字符
 	
 	// padWith
 	int		pad;	 // pad value
 	typedef enum{NONE,REPLICATE,SYMMETRIC,CIRCULAR} padType_e;
 	padType_e padType;
-
-protected:
 	Mat img; // 输入时拷贝到类内部，在内部进行处理
 };
 
@@ -44,4 +49,17 @@ public:
 private:
 	int colorSpace;
 	int smooth;
+};
+
+class ChnsManager{
+
+public:
+	ChnsManager(){};
+	void addChn(Chn* ch){
+		OUT("add channel");
+	}
+
+	void compute(Mat& chnDatas,Mat image){
+		OUT( "compute channle data");
+	}
 };
