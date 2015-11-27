@@ -5,7 +5,7 @@
 int main( int argc, char** argv )
 {
 	  Mat image, image2;
-	  image = imread( "lena.jpg" );
+	  image = acf::imread( "test/crop_000001a.png" );
 
 	  ColorChn colorChn(image);
 	  colorChn.compute();
@@ -16,6 +16,9 @@ int main( int argc, char** argv )
 
 	  namedWindow( "Color Channel", CV_WINDOW_AUTOSIZE );
 	  imshow( "Color Channel", image2 );
+
+	  waitKey(0);
+	  return 0;
 }
 
 #endif
