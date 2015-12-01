@@ -58,6 +58,7 @@ void testReadShowImage(){
 }
 
 void testMatRead(char* matPath){
+
 	mat_t *matfp;
 	matfp = Mat_Open(matPath,MAT_ACC_RDONLY);
 	if ( NULL == matfp ) {
@@ -493,9 +494,11 @@ void testMatRead(char* matPath){
 	Mat_Close(matfp);
 }
 
+#if NOW_TESTING == TEST_ALL
 int main( int argc, char** argv ){
 //	testLoadUseCase();
 	testTrainTestUseCase();
 //	testReadShowImage();
 //	testMatRead(argv[1]);
 }
+#endif
