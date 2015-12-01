@@ -8,8 +8,8 @@
 
 #include "../Util/IOUtil.h"
 #include "ACFDetector.h"
+#include "../Util/common.h"
 
-using namespace std;
 using namespace acf;
 ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
 	cout << "ACFDetector(Builder*)" << endl;

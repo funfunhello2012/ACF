@@ -8,11 +8,10 @@
 
 
 #include "IOUtil.h"
-#include <highgui.h>
+#include "common.h"
 
-using cv::Mat;
 using namespace acf;
-using namespace std;
+
 
 Mat acf::imread(const char* filename)  throw(invalid_argument){
 	Mat image;
@@ -34,17 +33,17 @@ void acf::imshow(const Mat image,const string  windowName){
 }
 
 ACFDetector acf::loadDetectorFromMat(const string matPath){
-	cout << "load detector from .mat " << matPath << endl;
+	OUT("load detector from .mat "+matPath);
 	ACFDetector detector = ACFDetector::Builder("").build();
 	return detector;
 }
 
 ACFDetector acf::loadDetectorFromJson(const string jsonPath){
-	cout << "load detector from .json " << jsonPath << endl;
+	OUT("load detector from .json " + jsonPath);
 	ACFDetector detector = ACFDetector::Builder("").build();
 	return detector;
 }
 
 void acf::writeDetectorToJson(const string filePath){
-	cout << "write detector to " << filePath << endl;
+	 OUT("write detector to " +filePath);
 }

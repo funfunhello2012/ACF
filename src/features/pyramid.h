@@ -6,7 +6,7 @@ using namespace std;
 class Pyramid{
 public:
 	Pyramid(ChnsManager manager){	}
-	void computeData(Mat image,vector<Mat*>& data){
+	void computeData(Mat image,vector<vector<Mat*> >& data){
 		OUT("compute pyramid Data");
 	}
 

@@ -10,9 +10,9 @@
 
 #include "../Util/Builder.h"
 #include "../Util/Util.h"
-#include "../features/Params.h"
+#include "../Util/common.h"
 #include <vector>
-#include <opencv2/opencv.hpp>
+
 
 using cv::Size;
 using cv::Mat;
@@ -41,23 +41,10 @@ public:
 	void detectImg(std::vector<BoundingBox>& bbs,Mat image);
 
 private:
-	class Opts{
-		const Size modelDimension;
-		const Size modelDimensionPad;
-		int stride;
-		int cascThr;
-		int cascCal;
-		const float seed;
-		const string name;
-		const string posImgDir;
-		const string negImgDir;
-		const int nPos;
-		const int nNeg;
-		const int nPerNeg;
-		const int nAccNeg;
-		ParamPyramid pPyramid;
-		std::vector<IParamChns*> pChannels;
-	};
+	Size modelDs;
+	Size modelDsPad;
+	int stride;
+	double cascThr;
 
 	ACFDetector(Builder* builder);
 	ACFDetector& operator=(const ACFDetector&);//prevent the compiler to generate copying assignment
