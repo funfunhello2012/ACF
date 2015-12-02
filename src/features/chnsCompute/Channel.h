@@ -10,11 +10,12 @@ public:
 	void setEnabled(bool e){
 		enabled = e;
 	}
-	Chn(){}
+	Chn(): enabled(true), pad(0), padType(NONE){}
 	Chn(Mat img): enabled(true), pad(0), padType(NONE){
 		img.copyTo(this -> img);
 	}
 	virtual void compute() = 0;
+	virtual  ~Chn() {}
 	Mat data(){
 		return img;
 	}
