@@ -1,95 +1,119 @@
 #include <iostream>
-#include "../Util/common.h"
-using namespace std;
+//#include "../Util/common.h"
 
+#include <opencv2/highgui/highgui.hpp>  
+#include <opencv2/imgproc/imgproc.hpp>  
+#include <opencv2/core/core.hpp> 
+using namespace cv;
 
 class Pyramid{
 public:
-	Pyramid(ChnsManager manager){	}
-	void computeData(Mat image,vector<vector<Mat*> >& data){
-		OUT("compute pyramid Data");
+	Pyramid(){
+		//colorspace=mana.getcolorspace();
+		colorspace=1;
+		
+		nPerOct=8;
+		nOctUp=0;
+		nApprox=-1;
+		pad.height=0;
+		pad.width=0;
+		minDs.height=16;
+		minDs.width=16;
+		smooth=1;
+		concat=true;
+		complete=true;
 	}
-
+	~Pyramid(){};
+	void computeData(Mat image,vector<vector <Mat>>& data);
+	//get methods
+	
+	int getcolorspace()
+	{
+		return colorspace;
+	}
+	int getnPerOct()
+	{
+		return nPerOct;
+	}
+	int getnOctUp()
+	{
+		return nOctUp;
+	}
+	int getnApprox()
+	{
+		return nApprox;
+	}
+	Size getpad()
+	{
+		return pad;
+	}
+	Size getminDs()
+	{
+		return minDs;
+	}
+	int getsmooth()
+	{
+		return smooth;
+	}
+	bool getconcat()
+	{
+		return concat;
+	}
+	bool getcomplete()
+	{
+		return complete;
+	}
+	//set methods
+	void getcolorspace(int colors)
+	{
+		colorspace=colors;
+	}
+	void setconcat(bool c)
+	{
+		concat=c;
+	}
+	void setcomplete(bool c)
+	{
+		complete=c;
+	}
+	void setsmooth(int sm)
+	{
+		smooth=sm;
+	}
+	void setnPerOct(int p)
+	{
+		nPerOct=p;
+	}
+	
+	void setnOctUp(int s)
+	{
+		nOctUp=s;
+	}
+	void setpad(Size p)
+	{
+		pad=p;
+	}
+	void setminDs(Size mins)
+	{
+		minDs=mins;
+	}
 private:
-	//	int nPerOct;      // [8] number of scales per octave
-	//	int nOctUp;       // [0] number of upsampled octaves to compute
-	//	int nApprox;      //[-1] number of approx. scales (if -1 nApprox=nPerOct-1)
-	//	float* lambdas;      // [] coefficients for power law scaling (see BMVC10)
-	//	int *pad;          // [0 0] amount to pad channels (along T/B and L/R)
-	//	int *minDs;        // [16 16] minimum image size for channel computation
-	//	int smooth;       //[1] radius for channel smoothing (using convTri)
-	//	bool concat;       //[1] if true concatenate channels
-	//	bool complete;     // [] if true does not check/set default vals in pPyramid
-	//	int nTypes;       // number of channel types
-	//	int nScales;      //number of scales computed
+
+	
+	int colorspace;
+	int nPerOct;      // [8] number of scales per octave
+	int nOctUp;       // [0] number of upsampled octaves to compute
+	int nApprox;      //[-1] number of approx. scales (if -1 nApprox=nPerOct-1)
+//	float* lambdas;      // [] coefficients for power law scaling (see BMVC10)
+	Size pad;          // [0 0] amount to pad channels (along T/B and L/R)
+	Size minDs;        // [16 16] minimum image size for channel computation
+	int smooth;       //[1] radius for channel smoothing (using convTri)
+	bool concat;       //[1] if true concatenate channels
+	bool complete;     // [] if true does not check/set default vals in pPyramid
+
 };
 
-//class pChns{
-//
-//};
-//class pPyramid{
-//
-//public:
-//	pPyramid(pChns pchns,int nperoct,int npctup,int napprox,float *la,int pa[2],int minds[2],int sm,bool conc,bool complet){
-//		pPyramid_pChns=pchns;
-//		nPerOct=nperoct;
-//		nOctUp=npctup;
-//		nApprox=napprox;
-//		lambdas=la;
-//		pad=pa;
-//		minDs=minds;
-//		smooth=sm;
-//		concat=conc;
-//		complete=complet;
-//	}
-//	pPyramid(){}
-//	~pPyramid(){}
-//	int getnPerOct(){
-//	return nPerOct;
-//	}
-//	int getnOctUp(){
-//	return nOctUp;
-//	}
-//	int getnApprox(){
-//		return nApprox;
-//	}
-//	float* getlambdas(){
-//		return lambdas;
-//	}
-//	int* getpad(){
-//		return pad;
-//	}
-//	int* getminDs(){
-//		return minDs;
-//	}
-//	int getsmooth(){
-//		return smooth;
-//	}
-//	bool getconcat(){
-//		return concat;
-//	}
-//	bool getcomplete(){
-//		return complete;
-//	}
-//	pChns getpPyramid_pChns(){
-//		return pPyramid_pChns;
-//	}
-//private:
-//	pChns pPyramid_pChns;
-//	int nPerOct;      // [8] number of scales per octave
-//	int nOctUp;       // [0] number of upsampled octaves to compute
-//	int nApprox;      //[-1] number of approx. scales (if -1 nApprox=nPerOct-1)
-//	float* lambdas;      // [] coefficients for power law scaling (see BMVC10)
-//	int *pad;          // [0 0] amount to pad channels (along T/B and L/R)
-//	int *minDs;        // [16 16] minimum image size for channel computation
-//	int smooth;       //[1] radius for channel smoothing (using convTri)
-//	bool concat;       //[1] if true concatenate channels
-//	bool complete;     // [] if true does not check/set default vals in pPyramid
-//};
-//class data{
-//};
-//class info{
-//};
+
 //class pyramid{
 //public:
 //	pyramid(pPyramid pyramid_ppyramid,int ntypes,int nscales){
@@ -107,4 +131,3 @@ private:
 //	//int()(2) scaleshw     - [nScales x 2] exact scales for resampling h and w
 //};
 //
-//pyramid compute();
