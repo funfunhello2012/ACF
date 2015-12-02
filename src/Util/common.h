@@ -38,7 +38,9 @@ using  namespace std;
 		#define NOW_TESTING	TEST_CHANNEL
 
 		#define OUT(x)  do{ cout << x << endl;}while(0)
+		#define OUT_V(x)  do{ cout << #x << ":" << x << endl;}while(0)
 
 #else
 		#define OUT(x)
+		#define OUT_V(x)
 #endif
