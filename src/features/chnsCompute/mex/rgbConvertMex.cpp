@@ -208,4 +208,202 @@ void mexFunction(int nl, mxArray *pl[], int nr, const mxArray *pr[]) {
   pl[0] = mxCreateNumericMatrix(0,0,idOut,mxREAL);
   mxSetData(pl[0],J); mxSetDimensions(pl[0],(const mwSize*) dims1,3);
 }
+#else
+#include "../../../Util/common.h"
+
+// type to be added to common.h
+enum {
+	ACF_convert2gray,
+	ACF_convert2hsv,
+	ACF_convert2luv,
+	ACF_convert2rgb,
+	ACF_convert2orig,
+
+	ACF_convertTypeNum
+};
+// % ===========================================================================
+// % function J = rgbConvert( I, colorSpace, useSingle )
+// %
+// % USAGE
+// %  J = rgbConvert( I, colorSpace, [useSingle] );
+// %
+// % INPUTS
+// %  I          - [hxwx3] input rgb image (uint8 or single/double in [0,1])
+// %  colorSpace - ['luv'] other choices include: 'gray', 'hsv', 'rgb', 'orig'
+// %  useSingle  - [true] determines output type (faster if useSingle)
+// %
+// % OUTPUTS
+// %  J          - [hxwx3] single or double output image (normalized to [0,1])
+// %
+// % colorSpace
+// % -gray hsv luv: colorspace transforms
+// % -rgb/orig: normalizes each channel of I to [0,1]
+// % useSingle instead of double can achieve faster speed
+// % ===========================================================================
+
+
+/** ****************************************************************************
+ * opencv 中的 cvtColor [1] 的数据格式为 InputArray
+ * 定义：
+ *   CV_EXPORTS_W
+ *   cvtColor( InputArray src, OutputArray dst, int code, int dstCn=0 );
+ * 这里由于是内部使用，不需要采用 InputArray，直接用 Mat
+ * 要注意这里的 code 和 opencv 中的 code 不同
+ *
+ * rgbConvert 为函数模板
+ *   oT* rgbConvert( iT *I, int n, int d, int flag, oT nrm )
+ * 参数：
+ * - n 			像素数目，d 维度 对于颜色转换来说，图像长宽信息是不必要的
+ * - flag
+ * - nrm 		归一化后的矩阵
+ * *****************************************************************************
+ * [1] cvtColor implemention 													https://github.com/Itseez/opencv/blob/ddf82d0b154873510802ef75c53e628cd7b2cb13/modules/imgproc/src/color.cpp
+ * [2] opencv/modules/core/include/opencv2/core/cvdef.h							https://github.com/Itseez/opencv/blob/ddf82d0b154873510802ef75c53e628cd7b2cb13/modules/core/include/opencv2/core/cvdef.h
+ * [3] "types_c.h" 																https://github.com/Itseez/opencv/blob/ddf82d0b154873510802ef75c53e628cd7b2cb13/modules/imgproc/include/opencv2/imgproc/types_c.h
+ */
+
+void cvtColor2(/*const*/ Mat &II, Mat &JJ, int code = ACF_convert2hsv) {
+
+	CV_Assert(code >= 0 && code <= ACF_convertTypeNum); // check parameters
+
+// % ===========================================================================
+// % const int *dims; int nDims, n, d, dims1[3]; void *I; void *J; int flag;
+// % bool single; mxClassID idIn, idOut;
+// %
+// % // Error checking
+// % if( nr!=3 ) mexErrMsgTxt("Three inputs expected.");
+// % if( nl>1 ) mexErrMsgTxt("One output expected.");
+// % dims = (const int*) mxGetDimensions(pr[0]); n=dims[0]*dims[1];
+// % nDims = mxGetNumberOfDimensions(pr[0]);
+// % d = 1; for( int i=2; i<nDims; i++ ) d*=dims[i];
+// %
+// % // extract input arguments
+// % I = mxGetPr(pr[0]);
+// % flag = (int) mxGetScalar(pr[1]);
+// % single = (bool) (mxGetScalar(pr[2])>0);
+// % idIn = mxGetClassID(pr[0]);
+// % ===========================================================================
+//       0  1  2  3 ...
+// dims: M, N, K, L ...
+// nDims: 3
+// n = M*N
+// d = K*L* ...
+
+// 暂时先仅看 rgb2hsv 的情形 code -> flag 后续完成
+    int flag = 3;
+    bool single = false;
+
+	void *I = (void *) (II.data);
+	void *J = (void *) (JJ.data);
+
+	int idIn = II.type();
+	int n = II.rows * II.cols;
+	int d = II.channels();
+	// http://docs.opencv.org/master/d3/d63/classcv_1_1Mat.html
+	OUT_V(idIn); // 16
+	OUT_V(n); // 9380 = 134*70
+	OUT_V(d); // 3
+// % ===========================================================================
+// % // call rgbConvert() based on type of input and output array
+// % if(!((d==1 && flag==0) || flag==1 || (d/3)*3==d))
+// %   mexErrMsgTxt("I must have third dimension d==1 or (d/3)*3==d.");
+// % if( idIn == mxSINGLE_CLASS && !single )
+// %   J = (void*) rgbConvert( (float*) I, n, d, flag, 1.0 );
+// % else if( idIn == mxSINGLE_CLASS && single )
+// %   J = (void*) rgbConvert( (float*) I, n, d, flag, 1.0f );
+// % else if( idIn == mxDOUBLE_CLASS && !single )
+// %   J = (void*) rgbConvert( (double*) I, n, d, flag, 1.0 );
+// % else if( idIn == mxDOUBLE_CLASS && single )
+// %   J = (void*) rgbConvert( (double*) I, n, d, flag, 1.0f );
+// % else if( idIn == mxUINT8_CLASS && !single )
+// %   J = (void*) rgbConvert( (unsigned char*) I, n, d, flag, 1.0/255 );
+// % else if( idIn == mxUINT8_CLASS && single )
+// %   J = (void*) rgbConvert( (unsigned char*) I, n, d, flag, 1.0f/255 );
+// % else
+// %   mexErrMsgTxt("Unsupported image type.");
+// % ===========================================================================
+
+	if(!((d==1 && flag==0) || flag==1 || (d/3)*3==d))
+		CV_Error( CV_StsBadFlag, "ACF/rgbConvert: I must have third dimension d==1 or (d/3)*3==d.");
+
+	switch(idIn) {
+
+// Single/Float 32bits
+	case CV_32FC1:
+	case CV_32FC2:
+	case CV_32FC3:
+	case CV_32FC4:
+
+		OUT("Single/Float 32bits");
+		if (single) {
+			J = (void*) rgbConvert( (float*) I, n, d, flag, 1.0f );
+		} else {
+			J = (void*) rgbConvert( (float*) I, n, d, flag, 1.0 );
+		}
+		break;
+
+// Double 64bits
+	case CV_64FC1:
+	case CV_64FC2:
+	case CV_64FC3:
+	case CV_64FC4:
+		OUT("Double 64bits");
+		if (single) {
+			J = (void*) rgbConvert( static_cast<double*>(I), n, d, flag, 1.0f/255 );
+		} else {
+			// error: invalid conversion from ‘void*’ to ‘double*’ [-fpermissive]
+			J = (void*) rgbConvert( static_cast<double*>(I), n, d, flag, 1.0/255 );
+		}
+		break;
+
+	// Unsigned 8bits (normal)
+	case CV_8UC1:
+	case CV_8UC2:
+	case CV_8UC3:
+	case CV_8UC4:
+		OUT("Unsigned 8bits (normal)");
+		if (single) {
+			J = (void*) rgbConvert( (unsigned char*) I, n, d, flag, 1.0f );
+		} else {
+			OUT("ERROR START HERE");
+			// error: invalid conversion from ‘void*’ to ‘XXX*’ [-fpermissive]
+			// terminate called after throwing an instance of 'char const*'
+			J = (void*) rgbConvert( static_cast<unsigned char*>(I), n, d, flag, 1.0 );
+			OUT("ERROR END");
+		}
+		break;
+
+	default:
+		CV_Error( CV_StsBadFlag, "ACF/rgbConvert: Unsupported image type." );
+	}
+// OpenCV Mat数据类型及位数总结 http://blog.sina.com.cn/s/blog_662c7859010105za.html
+
+	JJ = Mat(II.rows, II.cols, II.type(), J); // 存在bug：输出不一定为单通道
+
+// Mat (int rows, int cols, int type, void *data, size_t step=AUTO_STEP)
+// % ===========================================================================
+// % // create and set output array
+// % dims1[0]=dims[0]; dims1[1]=dims[1]; dims1[2]=(flag==0 ? (d==1?1:d/3) : d);
+// % idOut = single ? mxSINGLE_CLASS : mxDOUBLE_CLASS;
+// % pl[0] = mxCreateNumericMatrix(0,0,idOut,mxREAL);
+// % mxSetData(pl[0],J); mxSetDimensions(pl[0],(const mwSize*) dims1,3);
+// % ===========================================================================
+}
+
+/*
+	switch(code){
+	case ACF_convert2gray:
+		break;
+	case ACF_convert2hsv:
+		break;
+	case ACF_convert2luv:
+		break;
+	case ACF_convert2rgb:
+		break;
+	case ACF_convert2orig:
+		break;
+	default:
+		 CV_Error( CV_StsBadFlag, "ACF/rgbConvert: Unknown/unsupported color conversion code" );
+*/
+
 #endif
