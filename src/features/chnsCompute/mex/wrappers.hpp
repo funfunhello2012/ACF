@@ -16,6 +16,8 @@ inline void wrFree( void * ptr ) { mxFree(ptr); }
 
 #else
 
+#include <stdlib.h>     /* calloc, exit, free */
+
 // wrapper functions if compiling from C/C++
 inline void wrError(const char *errormsg) { throw errormsg; }
 inline void* wrCalloc( size_t num, size_t size ) { return calloc(num,size); }

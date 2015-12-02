@@ -53,7 +53,7 @@ template<class iT, class oT> void rgb2luv( iT *I, oT *J, int n, oT nrm ) {
 // Convert from rgb to luv using sse
 template<class iT> void rgb2luv_sse( iT *I, float *J, int n, float nrm ) {
   const int k=256; float R[k], G[k], B[k];
-  if( (size_t(R)&15||size_t(G)&15||size_t(B)&15||size_t(I)&15||size_t(J)&15)
+  if( ( (size_t(R)&15) || (size_t(G)&15) || (size_t(B)&15) || (size_t(I)&15) || (size_t(J)&15) )
     || n%4>0 ) { rgb2luv(I,J,n,nrm); return; }
   int i=0, i1, n1; float minu, minv, un, vn, mr[3], mg[3], mb[3];
   float *lTable = rgb2luv_setup(nrm,mr,mg,mb,minu,minv,un,vn);
