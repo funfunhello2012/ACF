@@ -8,7 +8,7 @@
 #ifndef SRC_UTIL_UTIL_H_
 #define SRC_UTIL_UTIL_H_
 
-#include <opencv2/opencv.hpp>
+#include "common.h"
 
 class BoundingBox{
 private:

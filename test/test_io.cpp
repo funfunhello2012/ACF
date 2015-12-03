@@ -1,48 +1,17 @@
 /*
- * test.cpp
+ * test_io.cpp
  *
- *  Created on: 2015年11月3日
+ *  Created on: 2015年12月3日
  *      Author: edison
  */
-#include "IOUtil.h"
 extern "C"{
 #include "matio.h"
 }
-#include "../detector/ACFDetector.h"
-#include "common.h"
-#include "../features/chnsCompute/Channel.h"
-#include "../features/pyramid.h"
 
-using namespace std;
-using namespace acf;
+#include "../src/Util/common.h"
+#include "../src/Util/IODetector.h"
+#include "../src/detector/ACFDetector.h"
 
-//use case 1 : load detector and detect image
-void testLoadUseCase(){
-	ACFDetector detector  =  loadDetectorFromMat("test.mat");
-	vector<BoundingBox> bbs;
-	Mat image;
-	detector.detectImg(bbs,image);
-}
-
-class ChnCustom: public Chn{
-public:
-	void compute(){
-		OUT("Custom compute");
-	}
-};
-//use case 2 :
-void testTrainTestUseCase(){
-	ACFDetector detector = ACFDetector::Builder("conf/detector.conf").build();
-	Mat img;
-	ChnsManager chnsManager;
-	Pyramid pyramid(chnsManager);
-	Chn* chn  = new ChnCustom();
-	chnsManager.addChn(chn);
-	vector<vector<Mat*> > datas;
-	pyramid.computeData(img,datas);
-	detector.train();
-	detector.test();
-}
 
 
 void testReadShowImage(){
@@ -494,11 +463,12 @@ void testMatRead(char* matPath){
 	Mat_Close(matfp);
 }
 
-#if NOW_TESTING == TEST_ALL
+#if NOW_TESTING == TEST_IO
+
 int main( int argc, char** argv ){
-//	testLoadUseCase();
-	testTrainTestUseCase();
+
 //	testReadShowImage();
-//	testMatRead(argv[1]);
+	testMatRead(argv[1]);
 }
+
 #endif

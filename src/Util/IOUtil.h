@@ -8,16 +8,13 @@
 #ifndef SRC_UTIL_IOUTIL_H_
 #define SRC_UTIL_IOUTIL_H_
 
-#include <iostream>
+#include "common.h"
 #include <stdexcept>
-#include <cv.h>
-#include "../detector/ACFDetector.h"
+
 
 using std::string;
 using std::invalid_argument;
 using cv::Mat;
-using acf::ACFDetector;
-
 
 namespace acf{
 
@@ -44,26 +41,7 @@ void imwrite(const string& filename,Mat image);
  */
 void imshow(const Mat image,const string  windowName="figure");
 
-/*********************************************************
- *  load detector from .mat(MATLAB) file
- *  @param mathPath : .mat filepath
- *  @return : the ACFDetector loaded
- */
-ACFDetector loadDetectorFromMat(const string matPath);
 
-/*********************************************************
- *  load detector from .json file
- *  @param jsonPath : detector.json filepath
- *  @return : the ACFDetector loaded
- */
-ACFDetector loadDetectorFromJson(const string jsonPath);
-
-/*********************************************************
- *  write detector to  filepath
- *  @param filePath : detector filepath
- *  @return : the ACFDetector loaded
- */
-void writeDetectorToJson(const string filePath);
 }
 
 

@@ -4,6 +4,8 @@
  * lib
  */
 #include<iostream>
+#include <vector>
+
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -14,8 +16,10 @@
  */
 #include "IOUtil.h"
 
-using namespace cv;
-using  namespace std;
+//using namespace cv;  //using namespace should not be used in header file
+//using  namespace std;
+using std::cout;
+using std::endl;
 
 /*******************************************************************************
  * settings
@@ -31,6 +35,7 @@ using  namespace std;
 		#define  TEST_ALL					1
 		#define	TEST_CHANNEL		2
 		#define  TEST_PYRAMID		3
+		#define  TEST_IO						4
 		// add your test cases here
 		// #define  TEST_XXXXX		  N
 
