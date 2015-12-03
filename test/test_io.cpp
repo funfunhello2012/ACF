@@ -12,7 +12,7 @@ extern "C"{
 #include "../src/Util/IODetector.h"
 #include "../src/detector/ACFDetector.h"
 
-
+using namespace std;
 
 void testReadShowImage(){
 		try{

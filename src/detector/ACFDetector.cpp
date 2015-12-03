@@ -10,6 +10,8 @@
 
 
 using namespace acf;
+using namespace std;
+
 ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
 	cout << "ACFDetector(Builder*)" << endl;
 }

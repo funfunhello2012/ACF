@@ -16,10 +16,6 @@
  */
 #include "IOUtil.h"
 
-//using namespace cv;  //using namespace should not be used in header file
-//using  namespace std;
-using std::cout;
-using std::endl;
 
 /*******************************************************************************
  * settings
@@ -42,8 +38,8 @@ using std::endl;
 		// specify what is testing now
 		#define NOW_TESTING	TEST_CHANNEL
 
-		#define OUT(x)  do{ cout << x << endl;}while(0)
-		#define OUT_V(x)  do{ cout << #x << ":" << x << endl;}while(0)
+		#define OUT(x)  do{ std::cout << x << std::endl;}while(0)
+		#define OUT_V(x)  do{ std::cout << #x << ":" << x << std::endl;}while(0)
 
 #else
 		#define OUT(x)
