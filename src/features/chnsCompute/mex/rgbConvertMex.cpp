@@ -294,7 +294,7 @@ void cvtColor2(/*const*/ Mat &II, Mat &JJ, int code = ACF_convert2hsv) {
     bool single = false;
 
 	void *I = (void *) (II.data);
-	void *J = (void *) (JJ.data);
+	void *J = NULL; //= (void *) (JJ.data);
 
 	int idIn = II.type();
 	int n = II.rows * II.cols;
@@ -349,10 +349,10 @@ void cvtColor2(/*const*/ Mat &II, Mat &JJ, int code = ACF_convert2hsv) {
 	case CV_64FC4:
 		OUT("Double 64bits");
 		if (single) {
-			J = (void*) rgbConvert( static_cast<double*>(I), n, d, flag, 1.0f/255 );
+			J = (void*) rgbConvert( (double*)I, n, d, flag, 1.0f/255 );
 		} else {
 			// error: invalid conversion from ‘void*’ to ‘double*’ [-fpermissive]
-			J = (void*) rgbConvert( static_cast<double*>(I), n, d, flag, 1.0/255 );
+			J = (void*) rgbConvert(  (double*)I, n, d, flag, 1.0/255 );
 		}
 		break;
 
@@ -366,9 +366,33 @@ void cvtColor2(/*const*/ Mat &II, Mat &JJ, int code = ACF_convert2hsv) {
 			J = (void*) rgbConvert( (unsigned char*) I, n, d, flag, 1.0f );
 		} else {
 			OUT("ERROR START HERE");
-			// error: invalid conversion from ‘void*’ to ‘XXX*’ [-fpermissive]
-			// terminate called after throwing an instance of 'char const*'
-			J = (void*) rgbConvert( static_cast<unsigned char*>(I), n, d, flag, 1.0 );
+			J = (void*) rgbConvert(  (unsigned char*) I, n, d, flag, 1.0 );
+
+			return;
+
+			// 直接调用模板,则运行时抛出异常 terminate called after throwing an instance of 'char const*'
+			// J = (void*) rgbConvert(  (unsigned char*) I, n, d, flag, 1.0 );
+
+			// 转为临时变量 编译不通过error: invalid conversion from ‘void*’ to ‘XXX*’ [-fpermissive]
+			// unsigned char * tmp =  (unsigned char*) I;
+			// J = (void*) rgbConvert(  tmp, n, d, flag, 1.0 );
+
+			// 动态转为临时变量 编译不通过 error: cannot dynamic_cast ‘I’ (of type ‘void*’) to type ‘unsigned char*’ (target is not pointer or reference to class)
+			// unsigned char * tmp =  dynamic_cast<unsigned char *>(I);
+
+			// reinterpret_cast, static_cast 运行抛出异常
+			// unsigned char * tmp =  static_cast<unsigned char *>(I);
+
+			// 直接转
+
+			// 测试来回转换 - 出错
+			acf::imshow(II, "II" );
+			unsigned char * tmp =  (unsigned char*) I;// dynamic_cast<unsigned char *>(I);
+			JJ = Mat(II.rows, II.cols, II.type(), (void*) tmp);
+			acf::imshow( JJ, "JJ" );
+
+			return;
+
 			OUT("ERROR END");
 		}
 		break;

@@ -5,7 +5,7 @@
 int main( int argc, char** argv )
 {
 	  Mat image, image2;
-	  image = acf::imread( "test/crop_000001a.png" );
+	  image = acf::imread( "data/I00000.png" ); // test/crop_000001a.png
 
 	  ColorChn colorChn(image);
 	  colorChn.compute();

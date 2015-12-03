@@ -103,7 +103,7 @@ void getScales(float *&scaless,int &nScales,int nPerOct,int nOctUp,Size minDs,in
 	}
 }
 
-void Pyramid:: computeData(Mat image,vector<vector <Mat>>& data){
+void Pyramid:: computeData(Mat image,vector<vector <Mat*> >& data){
 	int shrink=4;
 	float *scales;
 	int nScales;
@@ -187,13 +187,16 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat>>& data){
 	}
 }
 
+#if NOW_TESTING == TEST_PYRAMID
 
 int main()
 {
 	Pyramid p;
 	Mat I=imread("2.jpg");
-	vector<vector <Mat>> data;
+	vector< vector <Mat> > data; // error: ‘>>’ should be ‘> >’ within a nested template argument list
 	p.computeData(I,data);
 	//int position =getminmax();
 	return 0;
 }
+
+#endif

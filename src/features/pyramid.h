@@ -1,10 +1,11 @@
 #include <iostream>
-//#include "../Util/common.h"
+#include "../Util/common.h"
 
-#include <opencv2/highgui/highgui.hpp>  
-#include <opencv2/imgproc/imgproc.hpp>  
-#include <opencv2/core/core.hpp> 
-using namespace cv;
+//#include <opencv2/highgui/highgui.hpp>
+//#include <opencv2/imgproc/imgproc.hpp>
+//#include <opencv2/core/core.hpp>
+//using namespace cv;
+#include "chnsCompute/Channel.h"
 
 class Pyramid{
 public:
@@ -23,8 +24,9 @@ public:
 		concat=true;
 		complete=true;
 	}
-	~Pyramid(){};
-	void computeData(Mat image,vector<vector <Mat>>& data);
+	Pyramid(ChnsManager& c):Pyramid(){}
+	~Pyramid(){}
+	void computeData(Mat image,vector<vector <Mat*> >& data);
 	//get methods
 	
 	int getcolorspace()
