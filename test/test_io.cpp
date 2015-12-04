@@ -13,6 +13,7 @@ extern "C"{
 #include "../src/detector/ACFDetector.h"
 
 using namespace std;
+using namespace acf;
 
 void testReadShowImage(){
 		try{
@@ -466,9 +467,16 @@ void testMatRead(char* matPath){
 #if NOW_TESTING == TEST_IO
 
 int main( int argc, char** argv ){
+	//image with multi channels
+	unsigned char cData[24] = {'a','a','a','a','a','a','b','b','b','b','b','b',
+			'c','c','c','c','c','c','d','d','d','d','d','d'};
+	void * data = &cData;
+    Mat image(2, 2, CV_8UC(6), data);
+    OUT("init image");
+	cout << image << endl;
 
 //	testReadShowImage();
-	testMatRead(argv[1]);
+//	testMatRead(argv[1]);
 }
 
 #endif
