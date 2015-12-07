@@ -10,8 +10,6 @@
 
 #include "common.h"
 #include "../detector/ACFDetector.h"
-using acf::ACFDetector;
-
 
 namespace acf{
 /*********************************************************
@@ -34,6 +32,8 @@ ACFDetector loadDetectorFromJson(const string jsonPath);
  *  @return : the ACFDetector loaded
  */
 void writeDetectorToJson(const string filePath);
+
+//ACFDetector::Builder* loadBuilderConfig(const string configFile);
 }
 
 

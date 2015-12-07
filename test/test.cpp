@@ -31,7 +31,7 @@ public:
 };
 //use case 2 :
 void testTrainTestUseCase(){
-	ACFDetector detector = ACFDetector::Builder("conf/detector.conf").build();
+	ACFDetector detector = ACFDetector::Builder("detectorName","posDir","gtDir").build();
 	Mat img;
 	ChnsManager chnsManager;
 	Pyramid pyramid(chnsManager);
