@@ -30,11 +30,11 @@ public:
 		std::string _name;
 		std::string _gtDir;
 		std::string _posImgDir;
-		std::string _negImgDir;
+		std::string _negImgDir = "";
 		std::string _posWinDir = "";
 		std::string _negWinDir = "";
-		cv::Size _modelDs;
-		cv::Size _modelDsPad;
+		cv::Size _modelDs = cv::Size(100,41);
+		cv::Size _modelDsPad = cv::Size(128,64);
 		int _stride = 4;
 	public:
 		Builder(const std::string name,const std::string posDir,const std::string gtDir);
@@ -61,8 +61,8 @@ private:
 	std::string _gtDir;
 	std::string _posImgDir;
 	std::string _negImgDir;
-	std::string _posWinDir = "";
-	std::string _negWinDir = "";
+	std::string _posWinDir;
+	std::string _negWinDir;
 	cv::Size _modelDs;
 	cv::Size _modelDsPad;
 	int _stride;

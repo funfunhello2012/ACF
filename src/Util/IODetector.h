@@ -10,6 +10,9 @@
 
 #include "common.h"
 #include "../detector/ACFDetector.h"
+extern "C"{
+#include "matio.h"
+}
 
 namespace acf{
 /*********************************************************
