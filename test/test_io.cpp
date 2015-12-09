@@ -107,7 +107,7 @@ void testMatRead(char* matPath){
 				OUT(*concat);
 			}
 			//opts.filters
-			matvar_t * opts_filters = Mat_VarGetStructFieldByName(opts,"filters",0);
+//			matvar_t * opts_filters = Mat_VarGetStructFieldByName(opts,"filters",0);
 
 			//opts.modelDs
 			matvar_t* opts_modelDs = Mat_VarGetStructFieldByName(opts,"modelDs",0);
@@ -225,7 +225,7 @@ void testMatRead(char* matPath){
 			}
 
 			//opts.seed
-			matvar_t* opts_seed = Mat_VarGetStructFieldByName(opts,"seed",0);
+//			matvar_t* opts_seed = Mat_VarGetStructFieldByName(opts,"seed",0);
 			//opts.name
 			matvar_t* opts_name = Mat_VarGetStructFieldByName(opts,"name",0);
 			char* name = (char*)opts_name->data;
@@ -278,7 +278,7 @@ void testMatRead(char* matPath){
 			matvar_t* opts_nPerNeg = Mat_VarGetStructFieldByName(opts,"nPerNeg",0);
 			double *nPerNeg = (double*) opts_nPerNeg->data;
 			OUT("opts.nPerNeg");
-			OUT(*nNeg);
+			OUT(*nPerNeg);
 
 			//opts.nAccNeg
 			matvar_t* opts_nAccNeg = Mat_VarGetStructFieldByName(opts,"nAccNeg",0);

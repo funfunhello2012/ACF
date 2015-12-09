@@ -13,8 +13,21 @@
 #include "../Util/common.h"
 #include "../Util/IOUtil.h"
 
+typedef unsigned int uint32;
 
 namespace acf{
+
+struct ClassifierModel{
+	float* thrs;
+	float* hs;
+	uint32* fids;
+	uint32* child;
+	uint32 treeDepth;
+	uint32 nTreeNodes;
+	uint32 nTrees;
+};
+
+typedef struct ClassifierModel Clf;
 
 class ACFDetector {
 public:
@@ -25,6 +38,8 @@ public:
 	 *  first one is this,  initialize ACFDetector from builder
 	 *  second one is   load detector from .mat or .xml file using "Util/IOUtil"
 	 */
+
+
 	class Builder : public IBuilder<ACFDetector>{
 	private:
 		std::string _name;
@@ -36,6 +51,7 @@ public:
 		cv::Size _modelDs = cv::Size(100,41);
 		cv::Size _modelDsPad = cv::Size(128,64);
 		int _stride = 4;
+		Clf* _clf;
 	public:
 		Builder(const std::string name,const std::string posDir,const std::string gtDir);
 		~Builder();
@@ -46,6 +62,7 @@ public:
 		Builder* modelDs(cv::Size size);
 		Builder* modelDsPad(cv::Size size);
 		Builder* stride(int s);
+		Builder* Classifier(Clf* c);
 		friend ACFDetector;
 //		friend std::ostream& operator<<(std::ostream& os,const Builder& b);
 	};
@@ -67,7 +84,7 @@ private:
 	cv::Size _modelDsPad;
 	int _stride;
 	double _cascThr;
-
+	Clf* _clf;
 	ACFDetector(Builder* builder);
 	ACFDetector& operator=(const ACFDetector&);//prevent the compiler to generate copying assignment
 };

@@ -17,7 +17,8 @@ using namespace acf;
 
 //use case 1 : load detector and detect image
 void testLoadUseCase(){
-	ACFDetector detector  =  loadDetectorFromMat("/home/edison/workspace/acfImplement/ACF/data/AcfInriaDetector.mat");
+//	ACFDetector detector  =  loadDetectorFromMat("/home/edison/workspace/acfImplement/ACF/data/AcfInriaDetector.mat");
+	ACFDetector detector  =  loadDetectorFromJson("");
 	vector<BoundingBox> bbs;
 	Mat image;
 	detector.detectImg(bbs,image);

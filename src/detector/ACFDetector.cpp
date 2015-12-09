@@ -28,10 +28,16 @@ ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
 	this->_posImgDir = builder->_posImgDir;
 	this->_posWinDir = builder->_posWinDir;
 	this->_stride = builder->_stride;
+	this->_clf = builder->_clf;
 }
 
 ACFDetector::	~ACFDetector(){
 	OUT("~ACFDetector()");
+	delete[] this->_clf->child;
+	delete[] this->_clf->fids;
+	delete[] this->_clf->hs;
+	delete[] this->_clf->thrs;
+	delete this->_clf;
 }
 
 //ACFDetector::Builder::Builder(const string configFile){ cout << "Builder(config) from " << configFile << endl;}
@@ -57,7 +63,12 @@ std::ostream& acf::operator<<(std::ostream&os ,const ACFDetector& d){
 	cout << "name:"<<d._name<<',';
 	cout << "posDir:"<<d._posImgDir<<',';
 	cout << "gtDir:"<<d._gtDir<<',';
-	cout << "modelDsPad:"<<d._modelDsPad<<"...}";
+	cout << "negDir:"<<d._negImgDir<<',';
+	cout << "posWinDir:"<<d._posWinDir<<',';
+	cout << "negWinDir:"<<d._negWinDir<<',';
+	cout << "stride:"<<d._stride<<',';
+	cout << "modelDsPad:"<<d._modelDsPad<<',';
+	cout << "modelDs:"<<d._modelDs<<"...}";
 	return os;
 }
 
@@ -91,6 +102,10 @@ ACFDetector::Builder* ACFDetector::Builder::stride(int s){
 	return this;
 }
 
+ACFDetector::Builder* ACFDetector::Builder::Classifier(Clf* c){
+	this->_clf = c;
+	return this;
+}
 /**
  * Builder constructor to get a object
  */

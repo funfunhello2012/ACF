@@ -147,7 +147,7 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 			matvar_t* opts_nPerNeg = Mat_VarGetStructFieldByName(opts,"nPerNeg",0);
 			double *nPerNeg = (double*) opts_nPerNeg->data;
 			OUT("opts.nPerNeg");
-			OUT(*nNeg);
+			OUT(*nPerNeg);
 
 			//opts.nAccNeg
 			matvar_t* opts_nAccNeg = Mat_VarGetStructFieldByName(opts,"nAccNeg",0);
@@ -301,32 +301,48 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 
 		}//end opts
 
+		//clf
 		matvar_t* clf = Mat_VarGetStructFieldByName(matvar,"clf",0);
 		if(clf!=NULL){
 			OUT("Read Detector clf Field");
+			Clf* classifier = new Clf();
 			//clf.fids
 			matvar_t* clf_fids = Mat_VarGetStructFieldByName(clf,"fids",0);
-			unsigned int * fids = (unsigned int*) clf_fids->data;
+			uint32 * fids = (uint32*) clf_fids->data;
 			OUT("cls.fids");
-			OUT(clf_fids->dims[0]);
-			OUT(clf_fids->dims[1]);
+			classifier->nTreeNodes = clf_fids->dims[0];
+			classifier->nTrees = clf_fids->dims[1];
+			classifier->fids = fids;
+			classifier->fids = new uint32[classifier->nTreeNodes*classifier->nTrees];
+			memcpy((void*)classifier->fids,(void*)fids,clf_fids->nbytes);
+//			OUT(clf_fids->dims[0]);
+//			OUT(clf_fids->dims[1]);
 //			OUT(*(fids+2));
-
+//			OUT(*(fids+14336));
+//			OUT(*(fids+14337));
+//			OUT("show memcpyed?");
+//			OUT(*(classifier->fids+2));
+//			OUT(*(classifier->fids+14336));
+//			OUT(*(classifier->fids+14337));
 			//clf.thrs
 			matvar_t* clf_thrs = Mat_VarGetStructFieldByName(clf,"thrs",0);
 			float *thrs = (float*) clf_thrs->data;
 			OUT("cls.thrs");
-			OUT(clf_thrs->dims[0]);
-			OUT(clf_thrs->dims[1]);
+//			OUT(clf_thrs->dims[0]);
+//			OUT(clf_thrs->dims[1]);
 //			OUT(*(thrs+2));
-
+//			OUT(clf_thrs->nbytes);
+			classifier->thrs = new float[classifier->nTreeNodes*classifier->nTrees];
+			memcpy((void*)classifier->thrs,(void*)thrs,clf_thrs->nbytes);
 			//clf.child
 			matvar_t* clf_child = Mat_VarGetStructFieldByName(clf,"child",0);
-			unsigned int *child = (unsigned int*) clf_child->data;
+			uint32 *child = (uint32*) clf_child->data;
 			OUT("cls.child");
-			OUT(clf_child->dims[0]);
-			OUT(clf_child->dims[1]);
+//			OUT(clf_child->dims[0]);
+//			OUT(clf_child->dims[1]);
 //			OUT(*(child+2));
+			classifier->child = new uint32[classifier->nTreeNodes*classifier->nTrees];
+			memcpy((void*)classifier->child,(void*)child,clf_child->nbytes);
 
 			//clf.hs
 			matvar_t* clf_hs = Mat_VarGetStructFieldByName(clf,"hs",0);
@@ -335,44 +351,48 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 			OUT(clf_hs->dims[0]);
 			OUT(clf_hs->dims[1]);
 //			OUT(*(hs+2));
+			classifier->hs = new float[classifier->nTreeNodes*classifier->nTrees];
+			memcpy((void*)classifier->hs,(void*)hs,clf_hs->nbytes);
 
 			//clf.weights
-			matvar_t* clf_weights = Mat_VarGetStructFieldByName(clf,"weights",0);
-			float *weights = (float*) clf_weights->data;
-			OUT("cls.weights");
-			OUT(clf_weights->dims[0]);
-			OUT(clf_weights->dims[1]);
+//			matvar_t* clf_weights = Mat_VarGetStructFieldByName(clf,"weights",0);
+//			float *weights = (float*) clf_weights->data;
+//			OUT("cls.weights");
+//			OUT(clf_weights->dims[0]);
+//			OUT(clf_weights->dims[1]);
 //			OUT(*(weights+2));
 
 			//clf.depth
-			matvar_t* clf_depth = Mat_VarGetStructFieldByName(clf,"depth",0);
-			unsigned int  *depth = (unsigned int *) clf_depth->data;
-			OUT("cls.depth");
-			OUT(clf_depth->dims[0]);
-			OUT(clf_depth->dims[1]);
+//			matvar_t* clf_depth = Mat_VarGetStructFieldByName(clf,"depth",0);
+//			uint32  *depth = (uint32 *) clf_depth->data;
+//			OUT("cls.depth");
+//			OUT(clf_depth->dims[0]);
+//			OUT(clf_depth->dims[1]);
 //			OUT(*(depth+2));
 
 			//clf.errs
-			matvar_t* clf_errs = Mat_VarGetStructFieldByName(clf,"errs",0);
-			double *errs = (double*) clf_errs->data;
-			OUT("cls.errs");
-			OUT(clf_errs->dims[0]);
-			OUT(clf_errs->dims[1]);
+//			matvar_t* clf_errs = Mat_VarGetStructFieldByName(clf,"errs",0);
+//			double *errs = (double*) clf_errs->data;
+//			OUT("cls.errs");
+//			OUT(clf_errs->dims[0]);
+//			OUT(clf_errs->dims[1]);
 //			OUT(*(errs+2));
 
 			//clf.losses
-			matvar_t* clf_losses = Mat_VarGetStructFieldByName(clf,"losses",0);
-			double *losses = (double*) clf_losses->data;
-			OUT("cls.losses");
-			OUT(clf_losses->dims[0]);
-			OUT(clf_losses->dims[1]);
+//			matvar_t* clf_losses = Mat_VarGetStructFieldByName(clf,"losses",0);
+//			double *losses = (double*) clf_losses->data;
+//			OUT("cls.losses");
+//			OUT(clf_losses->dims[0]);
+//			OUT(clf_losses->dims[1]);
 //			OUT(*(losses+2));
 
 			//clf.treeDepth
 			matvar_t* clf_treeDepth = Mat_VarGetStructFieldByName(clf,"treeDepth",0);
-			unsigned int *treeDepth = (unsigned int*) clf_treeDepth->data;
+			uint32 *treeDepth = (uint32*) clf_treeDepth->data;
 			OUT("cls.treeDepth");
 			OUT(*treeDepth);
+			classifier->treeDepth = *treeDepth;
+			builder->Classifier(classifier);
 		}//end clf
 
 		matvar_t* info = Mat_VarGetStructFieldByName(matvar,"info",0);
@@ -472,7 +492,9 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 	Mat_Close(matfp);
 
 	ACFDetector detector = builder->build();
+//	delete builder;
 	OUT(detector);
+
 	return detector;
 }
 
@@ -480,6 +502,7 @@ ACFDetector acf::loadDetectorFromJson(const string jsonPath){
 	OUT("load detector from .json " + jsonPath);
 	ACFDetector::Builder* builder = new ACFDetector::Builder("testDe","/posDir","/gtDir");
 	ACFDetector detector = builder->build();
+	delete builder;
 	return detector;
 }
 
