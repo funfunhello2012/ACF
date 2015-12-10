@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-//function in getScales
+//function in getScales 
 int getminmax(float a[],float b[])
 {
 	float c[101];
