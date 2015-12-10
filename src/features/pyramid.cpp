@@ -2,7 +2,7 @@
 #include <iostream>
 using namespace std;
 
-//function in getScales 
+//function in getScales
 int getminmax(float a[],float b[])
 {
 	float c[101];
@@ -22,6 +22,7 @@ int getminmax(float a[],float b[])
 	}
 	return position;
 }
+
 
 void getScales(float *&scaless,int &nScales,int nPerOct,int nOctUp,Size minDs,int shrink,Size sz)
 {
@@ -103,13 +104,45 @@ void getScales(float *&scaless,int &nScales,int nPerOct,int nOctUp,Size minDs,in
 	}
 }
 
-void Pyramid:: computeData(Mat image,vector<vector <Mat> >& data){
+float getmat_sum(Mat mat)
+{
+	float *p;
+	float sum=0.0;
+	for(int i=0;i<mat.rows;i++)
+	{
+		for(int j=0;j<mat.cols*mat.channels();j++)
+		{
+			p=mat.ptr<float>(i);
+			sum=sum+p[j];
+		}
+	}
+	sum=sum/(mat.cols*mat.rows*mat.channels());
+	return sum;
+}
+
+
+void approxcompute(Mat &mat,float ratio)
+{
+	float *p;
+	for(int i=0;i<mat.rows;i++)
+	{
+		for(int j=0;j<mat.cols*mat.channels();j++)
+		{
+			p=mat.ptr<float>(i);
+			p[j]=p[j]*ratio;
+		}
+	}
+}
+
+void Pyramid:: computeData(Mat image,vector<vector <Mat>>& data){
 	int shrink=4;
 	float *scales;
 	int nScales;
 	Size size;
 	size.width=image.cols;
 	size.height=image.rows;
+	int ntypes=3;
+	float *lambdas;
 	if(nApprox<0)
 		nApprox=nPerOct-1;
 	/*
@@ -119,6 +152,7 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat> >& data){
 
 	// get scales at which to compute features and list of real/approx scales
 	getScales(scales,nScales,nPerOct,nOctUp,minDs,4,size);
+	data=vector<vector <Mat>>(nScales,vector<Mat>(ntypes));
 	//cout<<nScales<<endl;
 	//for(int i=0;i<nScales;i++)
 		//cout<<scales[i]<<endl;
@@ -142,7 +176,7 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat> >& data){
 		cout<<isN[i]<<endl;*/
 	//compute image pyramid[real scales]
 
-	for(int i=0;i<(int)isR.size();i++)
+	for(int i=0;i<(int)isR.size();i++)//iÐèÐÞ¸Ä
 	{
 		float s=scales[isR[i]-1];
 		Size sz1((int)((size.width*s/shrink)*shrink+0.5),(int)((size.height*s/shrink)*shrink+0.5));
@@ -165,14 +199,16 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat> >& data){
 		}*/
 		if(s==0.5&&(nApprox>0||nPerOct==1))
 			image=I1;
-
-		Mat d;
 		
-		cvtColor(I1, d, CV_BGR2GRAY);
-		//data.push_back(d);
+		//»ñµÃÖ±½Ó¼ÆËã£¬ÐèÐÞ¸Ä
+			//data.push_back(d);
+		vector<Mat> p(ntypes);
+		//compute º¯Êý
+		data[isR[i]-1]=p;
 	}
-
+	
 	//if lambdas not specified compute image specific lambdas
+	lambdas=(float*)malloc(ntypes*sizeof(float));
 	if(nScales>0&&nApprox>0)
 	{
 		vector<int> is,istmp;
@@ -183,20 +219,45 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat> >& data){
 			is.push_back(istmp[1]);
 			is.push_back(istmp[2]);
 		}
+		vector<Mat> d0=data[is[0]-1];
+		vector<Mat> dd0=data[is[1]-1];
+		float *matsum1=(float*)malloc(ntypes*sizeof(float));
+		float *matsum2=(float*)malloc(ntypes*sizeof(float));
+		lambdas=(float*)malloc(ntypes*sizeof(float));
+		for(int i=0;i<ntypes;i++)
+		{
+			matsum1[i]=getmat_sum(d0[i]);
+			matsum2[i]=getmat_sum(dd0[i]);
+			//cout<<matsum1[i]<<"  "<<matsum2[i]<<"  "<<endl;
+			lambdas[i]=(float)(-log10((double)(matsum1[i]/matsum2[i]))/log10((double)2))/(log10((double)(scales[is[0]-1]/scales[is[1]-1])/log10((double)2)));
+			//cout<<scales[istmp[1]-1]<<"  "<<scales[istmp[2]-1]<<"  "<<lambdas[i]<<"  ";
+		}
+
 		//cout<<is[0]<<" "<<is[1]<<endl;
 	}
+	//cocompute image pyramid [approximated scales]
+	for(int i=0;i<isA.size();i++)
+	{
+		int iR=isN[isA[i]-1];
+		//cout<<(int)(iR/nPerOct)<<endl;
+		float s=scales[isA[i]-1];
+		Size sz1((int)((size.width*s/shrink)*shrink+0.5),(int)((size.height*s/shrink)*shrink+0.5));
+		//resize(image,I1,sz1,0,0,CV_INTER_LINEAR);
+		vector<Mat> m1=data[iR-1];
+		for(int j=0;j<ntypes;j++)
+		{
+			float ratio=pow(scales[isA[i]-1]/scales[iR-1],-lambdas[j]);
+
+			Mat m11;//»ñµÃ½üËÆ¼ÆËã£¬ÐèÐÞ¸Ä
+			resize(m1[j],m11,sz1,0,0,CV_INTER_LINEAR);
+			approxcompute(m11,ratio);
+			m1.push_back(m11);
+		}
+		data[isA[i]-1]=m1;
+	}
+	
+	//smooth channels, optionally pad and concatenate channels
 }
 
-#if NOW_TESTING == TEST_PYRAMID
 
-int main()
-{
-	Pyramid p;
-	Mat I=imread("2.jpg");
-	vector< vector <Mat> > data; // error: â€˜>>â€™ should be â€˜> >â€™ within a nested template argument list
-	p.computeData(I,data);
-	//int position =getminmax();
-	return 0;
-}
 
-#endif
