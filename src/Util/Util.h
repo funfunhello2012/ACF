@@ -10,6 +10,10 @@
 
 #include "common.h"
 
+enum COLORSPACE{
+	YUV,RGB,HSV,GRAY
+};
+
 class BoundingBox{
 private:
 	cv::Rect_<float> box;

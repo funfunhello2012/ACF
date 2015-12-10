@@ -17,8 +17,8 @@ using namespace acf;
 
 //use case 1 : load detector and detect image
 void testLoadUseCase(){
-//	ACFDetector detector  =  loadDetectorFromMat("/home/edison/workspace/acfImplement/ACF/data/AcfInriaDetector.mat");
-	ACFDetector detector  =  loadDetectorFromJson("");
+	ACFDetector detector  =  loadDetectorFromMat("/home/edison/workspace/acfImplement/ACF/data/AcfInriaDetector.mat");
+//	ACFDetector detector  =  loadDetectorFromJson("");
 	vector<BoundingBox> bbs;
 	Mat image;
 	detector.detectImg(bbs,image);
@@ -38,7 +38,7 @@ void testTrainTestUseCase(){
 	Pyramid pyramid(chnsManager);
 	Chn* chn  = new ChnCustom();
 	chnsManager.addChn(chn);
-	vector<vector<Mat*> > datas;
+	vector<vector<Mat> > datas;
 	pyramid.computeData(img,datas);
 	detector.train();
 	detector.test();

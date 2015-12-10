@@ -22,7 +22,7 @@ public:
 	}
 	Pyramid(ChnsManager& c):Pyramid(){}
 	~Pyramid(){}
-	void computeData(Mat image,vector<vector <Mat*> >& data);
+	void computeData(Mat image,vector<vector <Mat> >& data);
 	//get methods
 	
 	int getcolorspace()

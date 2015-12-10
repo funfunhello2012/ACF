@@ -8,6 +8,7 @@
 #ifndef SRC_DETECTOR_ACFDETECTOR_H_
 #define SRC_DETECTOR_ACFDETECTOR_H_
 
+#include <cmath>
 #include "../Util/Builder.h"
 #include "../Util/Util.h"
 #include "../Util/common.h"
@@ -72,7 +73,6 @@ public:
 	void test();
 
 	void detectImg(std::vector<BoundingBox>& bbs,cv::Mat image);
-
 private:
 	std::string _name;
 	std::string _gtDir;
@@ -85,6 +85,7 @@ private:
 	int _stride;
 	double _cascThr;
 	Clf* _clf;
+	Builder* _builder;
 	ACFDetector(Builder* builder);
 	ACFDetector& operator=(const ACFDetector&);//prevent the compiler to generate copying assignment
 };

@@ -492,7 +492,7 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 	Mat_Close(matfp);
 
 	ACFDetector detector = builder->build();
-//	delete builder;
+//	delete builder;//delete was done in ~ACFDetector()
 	OUT(detector);
 
 	return detector;
@@ -502,7 +502,7 @@ ACFDetector acf::loadDetectorFromJson(const string jsonPath){
 	OUT("load detector from .json " + jsonPath);
 	ACFDetector::Builder* builder = new ACFDetector::Builder("testDe","/posDir","/gtDir");
 	ACFDetector detector = builder->build();
-	delete builder;
+//	delete builder;//delete was done in ~ACFDetector()
 	return detector;
 }
 

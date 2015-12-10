@@ -103,7 +103,7 @@ void getScales(float *&scaless,int &nScales,int nPerOct,int nOctUp,Size minDs,in
 	}
 }
 
-void Pyramid:: computeData(Mat image,vector<vector <Mat*> >& data){
+void Pyramid:: computeData(Mat image,vector<vector <Mat> >& data){
 	int shrink=4;
 	float *scales;
 	int nScales;
