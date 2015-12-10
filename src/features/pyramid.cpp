@@ -176,7 +176,7 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat>>& data){
 		cout<<isN[i]<<endl;*/
 	//compute image pyramid[real scales]
 
-	for(int i=0;i<(int)isR.size();i++)//i需修改
+	for(int i=0;i<(int)isR.size();i++)//
 	{
 		float s=scales[isR[i]-1];
 		Size sz1((int)((size.width*s/shrink)*shrink+0.5),(int)((size.height*s/shrink)*shrink+0.5));
@@ -200,10 +200,10 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat>>& data){
 		if(s==0.5&&(nApprox>0||nPerOct==1))
 			image=I1;
 		
-		//获得直接计算，需修改
+
 			//data.push_back(d);
 		vector<Mat> p(ntypes);
-		//compute 函数
+		//compute
 		data[isR[i]-1]=p;
 	}
 	
@@ -236,7 +236,7 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat>>& data){
 		//cout<<is[0]<<" "<<is[1]<<endl;
 	}
 	//cocompute image pyramid [approximated scales]
-	for(int i=0;i<isA.size();i++)
+	for(int i=0;i<(int)isA.size();i++)
 	{
 		int iR=isN[isA[i]-1];
 		//cout<<(int)(iR/nPerOct)<<endl;
@@ -248,7 +248,7 @@ void Pyramid:: computeData(Mat image,vector<vector <Mat>>& data){
 		{
 			float ratio=pow(scales[isA[i]-1]/scales[iR-1],-lambdas[j]);
 
-			Mat m11;//获得近似计算，需修改
+			Mat m11;//
 			resize(m1[j],m11,sz1,0,0,CV_INTER_LINEAR);
 			approxcompute(m11,ratio);
 			m1.push_back(m11);

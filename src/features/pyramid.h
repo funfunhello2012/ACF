@@ -5,10 +5,10 @@ using namespace cv;
 
 class Pyramid{
 public:
-	Pyramid(){
+	Pyramid(ChnsManager c){
 		//colorspace=mana.getcolorspace();
+		chnsmanager=c;
 		colorspace=1;
-		
 		nPerOct=8;
 		nOctUp=0;
 		nApprox=-1;
@@ -20,11 +20,14 @@ public:
 		concat=true;
 		complete=true;
 	}
-	Pyramid(ChnsManager& c):Pyramid(){}
+	Pyramid():Pyramid(){}
 	~Pyramid(){}
 	void computeData(Mat image,vector<vector <Mat> >& data);
 	//get methods
-	
+	ChnsManager getChnsManager()
+	{
+		return chnsmanager;
+	}
 	int getcolorspace()
 	{
 		return colorspace;
@@ -62,6 +65,10 @@ public:
 		return complete;
 	}
 	//set methods
+	void setChnsManager(ChnsManager c)
+	{
+		chnsmanager=c;
+	}
 	void getcolorspace(int colors)
 	{
 		colorspace=colors;
@@ -97,7 +104,7 @@ public:
 	}
 private:
 
-	
+	ChnsManager chnsmanager;
 	int colorspace;
 	int nPerOct;      // [8] number of scales per octave
 	int nOctUp;       // [0] number of upsampled octaves to compute
