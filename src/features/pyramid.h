@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../Util/common.h"
 
 using namespace cv;
@@ -20,7 +22,7 @@ public:
 		concat=true;
 		complete=true;
 	}
-	Pyramid(ChnsManager& c):Pyramid(){}
+	Pyramid(ChnsManager* c):Pyramid(){}
 	~Pyramid(){}
 	void computeData(Mat image,vector<vector <Mat> >& data);
 	//get methods

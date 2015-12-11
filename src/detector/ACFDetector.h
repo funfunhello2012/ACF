@@ -13,6 +13,7 @@
 #include "../Util/Util.h"
 #include "../Util/common.h"
 #include "../Util/IOUtil.h"
+#include "../features/pyramid.h"
 
 typedef unsigned int uint32;
 
@@ -52,7 +53,10 @@ public:
 		cv::Size _modelDs = cv::Size(100,41);
 		cv::Size _modelDsPad = cv::Size(128,64);
 		int _stride = 4;
-		Clf* _clf;
+		double _cascThr = -1;
+		Clf* _clf = NULL;
+		Pyramid* _pyramid = new Pyramid();
+		ChnsManager* _chnsManager = new ChnsManager();
 	public:
 		Builder(const std::string name,const std::string posDir,const std::string gtDir);
 		~Builder();
@@ -63,7 +67,10 @@ public:
 		Builder* modelDs(cv::Size size);
 		Builder* modelDsPad(cv::Size size);
 		Builder* stride(int s);
-		Builder* Classifier(Clf* c);
+		Builder* cascThr(double t);
+		Builder* classifier(Clf* c);
+		Builder* pyramid(Pyramid* p);
+		Builder* chnsManager(ChnsManager* chnsM);
 		friend ACFDetector;
 //		friend std::ostream& operator<<(std::ostream& os,const Builder& b);
 	};
@@ -71,8 +78,15 @@ public:
 	friend std::ostream& operator<<(std::ostream&os ,const ACFDetector& d);
 	void train();
 	void test();
-
 	void detectImg(std::vector<BoundingBox>& bbs,cv::Mat image);
+	Pyramid* getPyramid(){
+		return this->_pyramid;
+	}
+
+	ChnsManager* getChnsManager(){
+		return this->_chnsManager;
+	}
+
 private:
 	std::string _name;
 	std::string _gtDir;
@@ -85,6 +99,8 @@ private:
 	int _stride;
 	double _cascThr;
 	Clf* _clf;
+	Pyramid* _pyramid;
+	ChnsManager* _chnsManager;
 	Builder* _builder;
 	ACFDetector(Builder* builder);
 	ACFDetector& operator=(const ACFDetector&);//prevent the compiler to generate copying assignment

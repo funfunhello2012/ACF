@@ -32,14 +32,15 @@ public:
 };
 //use case 2 :
 void testTrainTestUseCase(){
-	ACFDetector detector = ACFDetector::Builder("detectorName","posDir","gtDir").build();
+	ACFDetector::Builder* builder = new ACFDetector::Builder("detectorName","posDir","gtDir");
+	ACFDetector detector = builder->build();
 	Mat img;
-	ChnsManager chnsManager;
-	Pyramid pyramid(chnsManager);
+	ChnsManager* chnsManager = detector.getChnsManager();
+	Pyramid* pyramid = detector.getPyramid();
 	Chn* chn  = new ChnCustom();
-	chnsManager.addChn(chn);
+	chnsManager->addChn(chn);
 	vector<vector<Mat> > datas;
-	pyramid.computeData(img,datas);
+//	pyramid->computeData(img,datas);
 	detector.train();
 	detector.test();
 }

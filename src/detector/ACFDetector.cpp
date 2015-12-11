@@ -19,7 +19,6 @@ using cv::Mat;
 ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
 	this->_builder = builder;
 	OUT("ACFDetector(Builder*)");
-	this->_cascThr = -1;
 	this->_gtDir = builder->_gtDir;
 	this->_modelDs = builder->_modelDs;
 	this->_modelDsPad = builder->_modelDsPad;
@@ -29,15 +28,21 @@ ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
 	this->_posImgDir = builder->_posImgDir;
 	this->_posWinDir = builder->_posWinDir;
 	this->_stride = builder->_stride;
+	this->_cascThr = builder->_cascThr;
+	this->_chnsManager = builder->_chnsManager;
 	this->_clf = builder->_clf;
+	this->_pyramid = builder->_pyramid;
 }
 
 ACFDetector::	~ACFDetector(){
-	delete[] this->_clf->child;
-	delete[] this->_clf->fids;
-	delete[] this->_clf->hs;
-	delete[] this->_clf->thrs;
-	delete this->_clf;
+	if(this->_clf!=NULL){
+		delete[] this->_clf->child;
+		delete[] this->_clf->fids;
+		delete[] this->_clf->hs;
+		delete[] this->_clf->thrs;
+		delete this->_clf;
+	}
+	delete this->_pyramid;
 	delete this->_builder;
 	OUT("~ACFDetector()");
 }
@@ -103,8 +108,27 @@ ACFDetector::Builder* ACFDetector::Builder::stride(int s){
 	return this;
 }
 
-ACFDetector::Builder* ACFDetector::Builder::Classifier(Clf* c){
+ACFDetector::Builder* ACFDetector::Builder::cascThr(double t){
+	this->_cascThr = t;
+	return this;
+}
+
+ACFDetector::Builder* ACFDetector::Builder::classifier(Clf* c){
 	this->_clf = c;
+	return this;
+}
+
+ACFDetector::Builder* ACFDetector::Builder::pyramid(Pyramid* p){
+	if(this->_pyramid!=NULL)
+		delete this->_pyramid;
+	this->_pyramid = p;
+	return this;
+}
+
+ACFDetector::Builder* ACFDetector::Builder::chnsManager(ChnsManager* chnsM){
+	if(this->_chnsManager!=NULL)
+		delete this->_chnsManager;
+	this->_chnsManager = chnsM;
 	return this;
 }
 /**
