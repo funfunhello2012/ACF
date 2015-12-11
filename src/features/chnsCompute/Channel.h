@@ -60,6 +60,8 @@ public:
 		OUT("add channel");
 	}
 
+
+
 	void compute(Mat& chnDatas,Mat image){
 		OUT( "compute channle data");
 	}

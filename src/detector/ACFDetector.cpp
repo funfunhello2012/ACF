@@ -53,6 +53,8 @@ ACFDetector::Builder::Builder(const string name,const string posDir,const string
 	this->_name = name;
 	this->_posImgDir = posDir;
 	this->_gtDir = gtDir;
+	this->_chnsManager = new ChnsManager();
+	this->_pyramid = new Pyramid(this->_chnsManager);
 }
 
 ACFDetector::Builder::~Builder(){
@@ -118,18 +120,12 @@ ACFDetector::Builder* ACFDetector::Builder::classifier(Clf* c){
 	return this;
 }
 
-ACFDetector::Builder* ACFDetector::Builder::pyramid(Pyramid* p){
-	if(this->_pyramid!=NULL)
-		delete this->_pyramid;
-	this->_pyramid = p;
-	return this;
+Pyramid* ACFDetector::Builder::getPyramid(){
+	return this->_pyramid;
 }
 
-ACFDetector::Builder* ACFDetector::Builder::chnsManager(ChnsManager* chnsM){
-	if(this->_chnsManager!=NULL)
-		delete this->_chnsManager;
-	this->_chnsManager = chnsM;
-	return this;
+ChnsManager* ACFDetector::Builder::getChnsManager(){
+	return this->_chnsManager;
 }
 /**
  * Builder constructor to get a object

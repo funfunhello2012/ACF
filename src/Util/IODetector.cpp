@@ -19,8 +19,8 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 		exit(-1);
 	}
 	ACFDetector::Builder* builder = NULL;
-	ChnsManager* chnsM = new ChnsManager();
-	Pyramid* pyramid = new Pyramid(chnsM);
+	ChnsManager* chnsM = NULL;
+	Pyramid* pyramid = NULL;
 	matvar_t * matvar;
 	matvar = Mat_VarRead(matfp,"detector");
 //	matvar_t* matInfo;
@@ -144,6 +144,8 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 			char* negImgDir = (char*)opts_negImgDir->data;
 			OUT_V(negImgDir);
 			builder = new ACFDetector::Builder(name,posImgDir,posGtDir);
+			pyramid = builder->getPyramid();
+			chnsM = builder->getChnsManager();
 			builder->negImgDir(negImgDir);
 
 			//opts.filters

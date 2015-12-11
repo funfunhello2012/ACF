@@ -55,8 +55,8 @@ public:
 		int _stride = 4;
 		double _cascThr = -1;
 		Clf* _clf = NULL;
-		Pyramid* _pyramid = new Pyramid();
-		ChnsManager* _chnsManager = new ChnsManager();
+		Pyramid* _pyramid = NULL;
+		ChnsManager* _chnsManager = NULL;
 	public:
 		Builder(const std::string name,const std::string posDir,const std::string gtDir);
 		~Builder();
@@ -69,8 +69,8 @@ public:
 		Builder* stride(int s);
 		Builder* cascThr(double t);
 		Builder* classifier(Clf* c);
-		Builder* pyramid(Pyramid* p);
-		Builder* chnsManager(ChnsManager* chnsM);
+		Pyramid* getPyramid();
+		ChnsManager* getChnsManager();
 		friend ACFDetector;
 //		friend std::ostream& operator<<(std::ostream& os,const Builder& b);
 	};
