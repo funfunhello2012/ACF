@@ -28,6 +28,7 @@ ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
 	this->_posImgDir = builder->_posImgDir;
 	this->_posWinDir = builder->_posWinDir;
 	this->_stride = builder->_stride;
+	this->_shrink = builder->_shrink;
 	this->_cascThr = builder->_cascThr;
 	this->_chnsManager = builder->_chnsManager;
 	this->_clf = builder->_clf;
@@ -107,6 +108,10 @@ ACFDetector::Builder* ACFDetector::Builder::modelDsPad(cv::Size size){
 
 ACFDetector::Builder* ACFDetector::Builder::stride(int s){
 	this->_stride = s;
+	return this;
+}
+ACFDetector::Builder* ACFDetector::Builder::shrink(int s){
+	this->_shrink = s;
 	return this;
 }
 

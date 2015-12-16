@@ -53,6 +53,7 @@ public:
 		cv::Size _modelDs = cv::Size(100,41);
 		cv::Size _modelDsPad = cv::Size(128,64);
 		int _stride = 4;
+		int _shrink =  4;
 		double _cascThr = -1;
 		Clf* _clf = NULL;
 		Pyramid* _pyramid = NULL;
@@ -67,6 +68,7 @@ public:
 		Builder* modelDs(cv::Size size);
 		Builder* modelDsPad(cv::Size size);
 		Builder* stride(int s);
+		Builder* shrink(int s);
 		Builder* cascThr(double t);
 		Builder* classifier(Clf* c);
 		Pyramid* getPyramid();
@@ -97,6 +99,7 @@ private:
 	cv::Size _modelDs;
 	cv::Size _modelDsPad;
 	int _stride;
+	int _shrink;
 	double _cascThr;
 	Clf* _clf;
 	Pyramid* _pyramid;

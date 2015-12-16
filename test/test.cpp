@@ -20,7 +20,7 @@ void testLoadUseCase(){
 	ACFDetector detector  =  loadDetectorFromMat("/home/edison/workspace/acfImplement/ACF/data/AcfInriaDetector.mat");
 //	ACFDetector detector  =  loadDetectorFromJson("");
 	vector<BoundingBox> bbs;
-	Mat image;
+	Mat image = imread("./data/I00000.png");
 	detector.detectImg(bbs,image);
 }
 

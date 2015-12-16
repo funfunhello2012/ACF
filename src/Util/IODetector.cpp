@@ -27,98 +27,8 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 //	matInfo = Mat_VarReadInfo(matfp,"detector");
 //	Mat_VarPrint(matInfo,0);
 	if(NULL!=matvar){
-		matvar_t* info = Mat_VarGetStructFieldByName(matvar,"info",0);
-		if(info!=NULL){
-			OUT("Read detector info field");
-			//info
-			int idx = 0;
-			matvar_t* info_name = Mat_VarGetStructFieldByName(info,"name",idx);
-			matvar_t* info_pChn = Mat_VarGetStructFieldByName(info,"pChn",idx);
-//			matvar_t* info_nChns = Mat_VarGetStructFieldByName(info,"nChns",idx);
-//			matvar_t* info_padWith = Mat_VarGetStructFieldByName(info,"padWith",idx);
-
-
-			//color channel
-			char *colorName = (char*) info_name->data;
-			OUT("info.name");
-			OUT(colorName);
-			matvar_t* info_pChn_enabled = Mat_VarGetStructFieldByName(info_pChn,"enabled",0);
-			double * colorEnabled = (double *)info_pChn_enabled->data;
-			OUT("info.pChn.enabled");
-			OUT(*colorEnabled);
-			matvar_t* info_pChn_smooth = Mat_VarGetStructFieldByName(info_pChn,"smooth",0);
-			double * colorSmooth = (double *)info_pChn_smooth->data;
-			OUT("info.pChn.smooth");
-			OUT(*colorSmooth);
-			matvar_t* info_pChn_colorSpace = Mat_VarGetStructFieldByName(info_pChn,"colorSpace",0);
-			char * colorSpace = (char *)info_pChn_colorSpace->data;
-			OUT("info.pChn.colorSpace");
-			OUT(colorSpace);
-			ColorChn * LUVChn = NULL; //need a NULL mat Constructor
-
-			//gradient magnitude channel
-			idx = 1;
-			info_name = Mat_VarGetStructFieldByName(info,"name",idx);
-			char* magName = (char*) info_name->data;
-			OUT("info.name");
-			OUT(magName);
-			info_pChn = Mat_VarGetStructFieldByName(info,"pChn",idx);
-			info_pChn_enabled = Mat_VarGetStructFieldByName(info_pChn,"enabled",0);
-			double * magEnabled = (double *)info_pChn_enabled->data;
-			OUT("info.pChn.enabled");
-			OUT(*magEnabled);
-			matvar_t* info_pChn_colorChnUsed = Mat_VarGetStructFieldByName(info_pChn,"colorChn",0);
-			double * colorUsed = (double *)info_pChn_colorChnUsed->data;
-			OUT("info.pChn.colorChn");
-			OUT(*colorUsed);
-			matvar_t* info_pChn_normRad = Mat_VarGetStructFieldByName(info_pChn,"normRad",0);
-			double * normRad = (double *)info_pChn_normRad->data;
-			OUT("info.pChn.normRad");
-			OUT(*normRad);
-			matvar_t* info_pChn_normConst = Mat_VarGetStructFieldByName(info_pChn,"normConst",0);
-			double * normConst = (double *)info_pChn_normConst->data;
-			OUT("info.pChn.normConst");
-			OUT(*normConst);
-			matvar_t* info_pChn_full = Mat_VarGetStructFieldByName(info_pChn,"full",0);
-			double * full = (double *)info_pChn_full->data;
-			OUT("info.pChn.full");
-			OUT(*full);
-
-
-			//gradient histogram channel
-			idx = 2;
-			info_name = Mat_VarGetStructFieldByName(info,"name",idx);
-			char* gradName = (char*) info_name->data;
-			OUT("info.name");
-			OUT(gradName);
-			info_pChn = Mat_VarGetStructFieldByName(info,"pChn",idx);
-			info_pChn_enabled = Mat_VarGetStructFieldByName(info_pChn,"enabled",0);
-			double * gradEnabled = (double *)info_pChn_enabled->data;
-			OUT("info.pChn.enabled");
-			OUT(*gradEnabled);
-//			matvar_t* info_pChn_binSize = Mat_VarGetStructFieldByName(info_pChn,"binSize",0);
-//			double * binSize = (double *)info_pChn_binSize->data;
-//			OUT("info.pChn.binSize");
-//			OUT(*binSize);
-			matvar_t* info_pChn_nOrients = Mat_VarGetStructFieldByName(info_pChn,"nOrients",0);
-			double * nOrients = (double *)info_pChn_nOrients->data;
-			OUT("info.pChn.nOrients");
-			OUT(*nOrients);
-			matvar_t* info_pChn_softBin = Mat_VarGetStructFieldByName(info_pChn,"softBin",0);
-			double * softBin = (double *)info_pChn_softBin->data;
-			OUT("info.pChn.softBin");
-			OUT(*softBin);
-			matvar_t* info_pChn_useHog = Mat_VarGetStructFieldByName(info_pChn,"useHog",0);
-			double * useHog = (double *)info_pChn_useHog->data;
-			OUT("info.pChn.useHog");
-			OUT(*useHog);
-			matvar_t* info_pChn_clipHog = Mat_VarGetStructFieldByName(info_pChn,"clipHog",0);
-			double * clipHog = (double *)info_pChn_clipHog->data;
-			OUT("info.pChn.clipHog");
-			OUT(*clipHog);
-		}//end info
-
 		matvar_t* opts = Mat_VarGetStructFieldByName(matvar,"opts",0);
+		double * shrink = 0;
 		if(opts!=NULL){
 			OUT("Read Detector opts Field");
 			OUT("OPTS");
@@ -253,23 +163,27 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 				//detector.opts.pPyramid.pChns.shrink
 				matvar_t* opts_pPyramid_pChns = Mat_VarGetStructFieldByName(opts_pPyramid,"pChns",0);
 				matvar_t* opts_pPyramid_pChns_shrink = Mat_VarGetStructFieldByName(opts_pPyramid_pChns,"shrink",0);
-				double * shrink = (double*) opts_pPyramid_pChns_shrink->data;
+				shrink = (double*) opts_pPyramid_pChns_shrink->data;
 				OUT_V(*shrink);
+				builder->shrink(*shrink);
 
 				//opts.pPyramid.nPerOct
 				matvar_t* opts_pPyramid_nPerOct =  Mat_VarGetStructFieldByName(opts_pPyramid,"nPerOct",0);
 				double * nPerOct = (double*) opts_pPyramid_nPerOct->data;
 				OUT_V(*nPerOct);
+				pyramid->setnPerOct(*nPerOct);
 
 				//opts.pPyramid.nOctUp
 				matvar_t* opts_pPyramid_nOctUp =  Mat_VarGetStructFieldByName(opts_pPyramid,"nOctUp",0);
 				double * nOctUp = (double*) opts_pPyramid_nOctUp->data;
 				OUT_V(*nOctUp);
+				pyramid->setnOctUp(*nOctUp);
 
 				//opts.pPyramid.nApprox
 				matvar_t* opts_pPyramid_nApprox=  Mat_VarGetStructFieldByName(opts_pPyramid,"nApprox",0);
 				double * nApprox = (double*) opts_pPyramid_nApprox->data;
 				OUT_V(*nApprox);
+				pyramid->setnApprox(*nApprox);
 
 				//opts.pPyramid.lambdas
 				matvar_t* opts_pPyramid_lambdas=  Mat_VarGetStructFieldByName(opts_pPyramid,"lambdas",0);
@@ -284,6 +198,7 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 				OUT("opts.pPyramid.pad");
 				OUT(*pad);
 				OUT(*(pad+1));
+				pyramid->setpad(Size(*pad,*(pad+1)));
 
 				//opts.pPyramid.minDs
 				matvar_t* opts_pPyramid_minDs =  Mat_VarGetStructFieldByName(opts_pPyramid,"minDs",0);
@@ -291,16 +206,19 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 				OUT("opts.pPyramid.minDs");
 				OUT(*minDs);
 				OUT(*(minDs+1));
+				pyramid->setminDs(Size(*minDs,*(minDs+1)));
 
 				//opts.pPyramid.smooth
 				matvar_t* opts_pPyramid_smooth =  Mat_VarGetStructFieldByName(opts_pPyramid,"smooth",0);
 				double * smooth = (double*) opts_pPyramid_smooth->data;
 				OUT_V(*smooth);
+				pyramid->setsmooth(*smooth);
 
 				//opts.pPyramid.concat
 				matvar_t* opts_pPyramid_concat =  Mat_VarGetStructFieldByName(opts_pPyramid,"concat",0);
 				double * concat = (double*) opts_pPyramid_concat->data;
 				OUT_V(*concat);
+				pyramid->setconcat(*concat);
 			}
 
 			//opts.pBoost
@@ -353,6 +271,84 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 			}//end opts.pBoost
 
 		}//end opts
+
+		matvar_t* info = Mat_VarGetStructFieldByName(matvar,"info",0);
+		if(info!=NULL){
+			OUT("Read detector info field");
+			//info
+			int idx = 0;
+			matvar_t* info_name = Mat_VarGetStructFieldByName(info,"name",idx);
+			matvar_t* info_pChn = Mat_VarGetStructFieldByName(info,"pChn",idx);
+//			matvar_t* info_nChns = Mat_VarGetStructFieldByName(info,"nChns",idx);
+//			matvar_t* info_padWith = Mat_VarGetStructFieldByName(info,"padWith",idx);
+
+			//color channel
+			char *colorName = (char*) info_name->data;
+			OUT_V(colorName);
+			matvar_t* info_pChn_enabled = Mat_VarGetStructFieldByName(info_pChn,"enabled",0);
+			double * colorEnabled = (double *)info_pChn_enabled->data;
+			OUT_V(*colorEnabled);
+			matvar_t* info_pChn_smooth = Mat_VarGetStructFieldByName(info_pChn,"smooth",0);
+			double * colorSmooth = (double *)info_pChn_smooth->data;
+			OUT_V(*colorSmooth);
+			matvar_t* info_pChn_colorSpace = Mat_VarGetStructFieldByName(info_pChn,"colorSpace",0);
+			char * colorSpace = (char *)info_pChn_colorSpace->data;
+			OUT_V(colorSpace);
+			ColorChn * luvChn = new ColorChn(CV_BGR2Luv,*colorSmooth); //need a NULL mat Constructor
+
+			//gradient magnitude channel
+			idx = 1;
+			info_name = Mat_VarGetStructFieldByName(info,"name",idx);
+			char* magName = (char*) info_name->data;
+			OUT_V(magName);
+			info_pChn = Mat_VarGetStructFieldByName(info,"pChn",idx);
+			info_pChn_enabled = Mat_VarGetStructFieldByName(info_pChn,"enabled",0);
+			double * magEnabled = (double *)info_pChn_enabled->data;
+			OUT_V(*magEnabled);
+			matvar_t* info_pChn_colorChnUsed = Mat_VarGetStructFieldByName(info_pChn,"colorChn",0);
+			double * colorUsed = (double *)info_pChn_colorChnUsed->data;
+			OUT_V(*colorUsed);
+			matvar_t* info_pChn_normRad = Mat_VarGetStructFieldByName(info_pChn,"normRad",0);
+			double * normRad = (double *)info_pChn_normRad->data;
+			OUT_V(*normRad);
+			matvar_t* info_pChn_normConst = Mat_VarGetStructFieldByName(info_pChn,"normConst",0);
+			double * normConst = (double *)info_pChn_normConst->data;
+			OUT_V(*normConst);
+			matvar_t* info_pChn_full = Mat_VarGetStructFieldByName(info_pChn,"full",0);
+			double * full = (double *)info_pChn_full->data;
+			OUT_V(*full);
+			MagChn * magChn = new MagChn(*colorUsed,*normRad,*normConst,*full); //need a NULL mat Constructor
+
+			//gradient histogram channel
+			idx = 2;
+			info_name = Mat_VarGetStructFieldByName(info,"name",idx);
+			char* gradName = (char*) info_name->data;
+			OUT_V(gradName);
+			info_pChn = Mat_VarGetStructFieldByName(info,"pChn",idx);
+			info_pChn_enabled = Mat_VarGetStructFieldByName(info_pChn,"enabled",0);
+			double * gradEnabled = (double *)info_pChn_enabled->data;
+			OUT_V(*gradEnabled);
+//			matvar_t* info_pChn_binSize = Mat_VarGetStructFieldByName(info_pChn,"binSize",0);
+//			double * binSize = (double *)info_pChn_binSize->data;
+//			OUT("info.pChn.binSize");
+//			OUT(*binSize);
+			matvar_t* info_pChn_nOrients = Mat_VarGetStructFieldByName(info_pChn,"nOrients",0);
+			double * nOrients = (double *)info_pChn_nOrients->data;
+			OUT_V(*nOrients);
+			matvar_t* info_pChn_softBin = Mat_VarGetStructFieldByName(info_pChn,"softBin",0);
+			double * softBin = (double *)info_pChn_softBin->data;
+			OUT_V(*softBin);
+			matvar_t* info_pChn_useHog = Mat_VarGetStructFieldByName(info_pChn,"useHog",0);
+			double * useHog = (double *)info_pChn_useHog->data;
+			OUT_V(*useHog);
+			matvar_t* info_pChn_clipHog = Mat_VarGetStructFieldByName(info_pChn,"clipHog",0);
+			double * clipHog = (double *)info_pChn_clipHog->data;
+			OUT_V(*clipHog);
+			GradChn * gradChn = new GradChn(*shrink,*nOrients,*softBin,*useHog,*clipHog); //need a NULL mat Constructor
+			chnsM->addChn(luvChn);
+			chnsM->addChn(magChn);
+			chnsM->addChn(gradChn);
+		}//end info
 
 		//clf
 		matvar_t* clf = Mat_VarGetStructFieldByName(matvar,"clf",0);
@@ -442,8 +438,7 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 			//clf.treeDepth
 			matvar_t* clf_treeDepth = Mat_VarGetStructFieldByName(clf,"treeDepth",0);
 			uint32 *treeDepth = (uint32*) clf_treeDepth->data;
-			OUT("cls.treeDepth");
-			OUT(*treeDepth);
+			OUT_V(*treeDepth);
 			classifier->treeDepth = *treeDepth;
 			builder->classifier(classifier);
 		}//end clf

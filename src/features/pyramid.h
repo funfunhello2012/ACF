@@ -98,6 +98,9 @@ public:
 	{
 		nOctUp=s;
 	}
+	void setnApprox(int a){
+		nApprox = a;
+	}
 	void setpad(Size p)
 	{
 		pad=p;

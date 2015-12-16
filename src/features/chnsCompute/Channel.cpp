@@ -16,3 +16,11 @@ void ColorChn::compute(void){
 	cvtColor2(img, img,0);
 	// smoothing is not available now.
 }
+
+void MagChn::compute(void){
+	OUT("Computing gradient magnitude");
+}
+
+void GradChn::compute(void){
+	OUT("Computing gradient histogram");
+}
