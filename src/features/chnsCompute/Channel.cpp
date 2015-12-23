@@ -3,6 +3,9 @@
 
 #include <opencv2/objdetect/objdetect.hpp> // HOG Note: add opencv_objdetect to GCC linker setting
 
+using namespace cv;
+using namespace std;
+
 #if USE_MEX
 extern void cvtColor2(Mat &II, Mat &JJ, int code);
 #endif
@@ -78,4 +81,12 @@ void GradHistChn::compute(void){
 	// trouble of size: see http://stackoverflow.com/questions/14315488/opencv-getting-stdlength-error-what-vector-m-fill-insert-when-computing
 #endif
 	//  is not available now.
+}
+
+void MagChn::compute(void){
+	OUT("Computing gradient magnitude");
+}
+
+void GradChn::compute(void){
+	OUT("Computing gradient histogram");
 }

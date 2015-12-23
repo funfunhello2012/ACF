@@ -1,4 +1,6 @@
-#include "Channel.h"
+#include "../src/features/chnsCompute/Channel.h"
+
+using namespace cv;
 
 #if NOW_TESTING == TEST_CHANNEL
 

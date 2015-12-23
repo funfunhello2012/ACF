@@ -35,6 +35,11 @@ protected:
 
 class ColorChn : public Chn { // 颜色通道，三个分量
 public:
+	ColorChn(int colorSpace = CV_BGR2Luv, int smooth = 1) :
+		Chn(), colorSpace(colorSpace), smooth(smooth){
+			strcpy(name,  "color channels");
+			padType = REPLICATE;
+	}
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// %   .pColor       - parameters for color space:
 	// %     .enabled      - [1] if true enable color channels
@@ -51,6 +56,7 @@ private:
 	int colorSpace;
 	int smooth;
 };
+
 
 class GradHistChn : public Chn { // 颜色通道，三个分量
 public:
@@ -85,7 +91,55 @@ public:
 		OUT("add channel");
 	}
 
+
+
 	void compute(Mat& chnDatas,Mat image){
 		OUT( "compute channle data");
 	}
+};
+
+class MagChn : public Chn { // 颜色通道，三个分量
+public:
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//	%   .pGradMag     - parameters for gradient magnitude:
+	//	%     .enabled      - [1] if true enable gradient magnitude channel
+	//	%     .colorChn     - [0] if>0 color channel to use for grad computation
+	//	%     .normRad      - [5] normalization radius for gradient
+	//	%     .normConst    - [.005] normalization constant for gradient
+	//	%     .full         - [0] if true compute angles in [0,2*pi) else in [0,pi)
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	MagChn(bool colorUsed,int normR,double normC,bool f) :
+		Chn(),colorChnUsed(colorUsed),normRad(normR),normConst(normC),full(f){
+			strcpy(name,  "gradient magnitude");
+	}
+	void compute();
+private:
+	bool colorChnUsed;
+	int normRad;
+	double normConst;
+	bool full;
+};
+
+class GradChn : public Chn { // 颜色通道，三个分量
+public:
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	//	%   .pGradHist    - parameters for gradient histograms:
+	//	%     .enabled      - [1] if true enable gradient histogram channels
+	//	%     .binSize      - [shrink] spatial bin size (defaults to shrink)
+	//	%     .nOrients     - [6] number of orientation channels
+	//	%     .softBin      - [0] if true use "soft" bilinear spatial binning
+	//	%     .useHog       - [0] if true perform 4-way hog normalization/clipping
+	//	%     .clipHog      - [.2] value at which to clip hog histogram bins
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	GradChn(int binS,int nO,bool softB,bool useH,double cH) :
+		Chn(),binSize(binS),nOrients(nO),softBin(softB),useHog(useH),clipHog(cH){
+			strcpy(name,  "gradient histogram");
+	}
+	void compute();
+private:
+	int binSize;
+	int nOrients;
+	bool softBin;
+	bool useHog;
+	double clipHog;
 };

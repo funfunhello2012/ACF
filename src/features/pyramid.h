@@ -1,18 +1,16 @@
-#include <iostream>
+#pragma once
+
 #include "../Util/common.h"
 
-//#include <opencv2/highgui/highgui.hpp>
-//#include <opencv2/imgproc/imgproc.hpp>
-//#include <opencv2/core/core.hpp>
-//using namespace cv;
+using namespace cv;
 #include "chnsCompute/Channel.h"
 
 class Pyramid{
 public:
-	Pyramid(){
+	Pyramid(ChnsManager* c){
 		//colorspace=mana.getcolorspace();
+		chnsmanager=c;
 		colorspace=1;
-		
 		nPerOct=8;
 		nOctUp=0;
 		nApprox=-1;
@@ -24,11 +22,16 @@ public:
 		concat=true;
 		complete=true;
 	}
-	Pyramid(ChnsManager& c):Pyramid(){}
+	Pyramid():Pyramid(){
+		Pyramid(NULL);
+	}
 	~Pyramid(){}
-	void computeData(Mat image,vector<vector <Mat*> >& data);
+	void computeData(Mat image,vector<vector <Mat> >& data);
 	//get methods
-	
+	ChnsManager* getChnsManager()
+	{
+		return chnsmanager;
+	}
 	int getcolorspace()
 	{
 		return colorspace;
@@ -66,6 +69,10 @@ public:
 		return complete;
 	}
 	//set methods
+	void setChnsManager(ChnsManager* c)
+	{
+		chnsmanager=c;
+	}
 	void getcolorspace(int colors)
 	{
 		colorspace=colors;
@@ -91,6 +98,9 @@ public:
 	{
 		nOctUp=s;
 	}
+	void setnApprox(int a){
+		nApprox = a;
+	}
 	void setpad(Size p)
 	{
 		pad=p;
@@ -101,7 +111,7 @@ public:
 	}
 private:
 
-	
+	ChnsManager* chnsmanager;
 	int colorspace;
 	int nPerOct;      // [8] number of scales per octave
 	int nOctUp;       // [0] number of upsampled octaves to compute
