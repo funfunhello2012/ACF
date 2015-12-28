@@ -107,6 +107,7 @@ private:
 	Builder* _builder;
 	ACFDetector(Builder* builder);
 	ACFDetector& operator=(const ACFDetector&);//prevent the compiler to generate copying assignment
+	void detectOneScale(std::vector<BoundingBox>& bbs,float* chns,int rows,int cols,int nC);
 };
 
 //std::ostream& operator<<(std::ostream& os,const ACFDetector::Builder& b);

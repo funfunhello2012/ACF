@@ -140,107 +140,135 @@ ACFDetector ACFDetector:: Builder::build(){
 	return ACFDetector(this);
 }
 
+inline void getChild( float *chns1, uint32 *cids, uint32 *fids,
+  float *thrs, uint32 offset, uint32 &k0, uint32 &k ){
+  float ftr = chns1[cids[fids[k]]];
+  k = (ftr<thrs[k]) ? 1 : 2;
+  k0=k+=k0*2; k+=offset;
+}
+
 /**
  *
  */
-void detectOneScale(ACFDetector* detector,std::vector<BoundingBox>& bbs,vector<Mat*> chns){
+void ACFDetector::detectOneScale(std::vector<BoundingBox>& bbs,float* chns,int rows,int cols,int nC){
+	OUT("Detect One Scale");
 	//  // get inputs
-//	  float *chns;// = (float*) mxGetData(prhs[0]);
-//	//  mxArray *trees = (mxArray*) prhs[1];
-//	//  const int shrink = (int) mxGetScalar(prhs[2]);
-//
-//	const int modelHt = detector->_modelDsPad.height;
-//	const int modelWd = detector->_modelDsPad.width;
-//	const int stride = detector->_stride;
-//	const float cascThr = detector->_cascThr;
-//
-//	//  // extract relevant fields from trees
-//	float *thrs =  detector->_clf->thrs;
-//	float *hs =  detector->_clf->hs;
-//	uint32 *fids = detector->_clf->fids;
-//	uint32 *child = detector->_clf->child;
-//	const int treeDepth = detector->_clf->treeDepth;
-//	const int nTreeNodes = (int) detector->_clf->nTreeNodes;
-//	const int nTrees = (int) detector->_clf->nTrees;
-//
-//	const int height = chns[0]->rows;
-//	const int width = chns[0]->cols;
-//
-//	// get dimensions and constants
-//	const mwSize *chnsSize = mxGetDimensions(prhs[0]);
-//
-//	const int nChns = mxGetNumberOfDimensions(prhs[0])<=2 ? 1 : (int) chnsSize[2];
-//	const mwSize *fidsSize = mxGetDimensions(mxGetField(trees,0,"fids"));
-//
-//	const int height1 = (int) ceil(float(height*shrink-modelHt+1)/stride);
-//	const int width1 = (int) ceil(float(width*shrink-modelWd+1)/stride);
-//
-//	// construct cids array
-//	int nFtrs = modelHt/shrink*modelWd/shrink*nChns;
-//	uint32 *cids = new uint32[nFtrs]; int m=0;
-//	for( int z=0; z<nChns; z++ )
-//	for( int c=0; c<modelWd/shrink; c++ )
-//	  for( int r=0; r<modelHt/shrink; r++ )
-//		cids[m++] = z*width*height + c*height + r;
-//
-//	// apply classifier to each patch
-//	vector<int> rs, cs; vector<float> hs1;
-//	for( int c=0; c<width1; c++ ) for( int r=0; r<height1; r++ ) {
-//	float h=0, *chns1=chns+(r*stride/shrink) + (c*stride/shrink)*height;
-//	if( treeDepth==1 ) {
-//	  // specialized case for treeDepth==1
-//	  for( int t = 0; t < nTrees; t++ ) {
-//		uint32 offset=t*nTreeNodes, k=offset, k0=0;
-//		getChild(chns1,cids,fids,thrs,offset,k0,k);
-//		h += hs[k]; if( h<=cascThr ) break;
-//	  }
-//	} else if( treeDepth==2 ) {
-//	  // specialized case for treeDepth==2
-//	  for( int t = 0; t < nTrees; t++ ) {
-//		uint32 offset=t*nTreeNodes, k=offset, k0=0;
-//		getChild(chns1,cids,fids,thrs,offset,k0,k);
-//		getChild(chns1,cids,fids,thrs,offset,k0,k);
-//		h += hs[k]; if( h<=cascThr ) break;
-//	  }
-//	} else if( treeDepth>2) {
-//	  // specialized case for treeDepth>2
-//	  for( int t = 0; t < nTrees; t++ ) {
-//		uint32 offset=t*nTreeNodes, k=offset, k0=0;
-//		for( int i=0; i<treeDepth; i++ )
-//		  getChild(chns1,cids,fids,thrs,offset,k0,k);
-//		h += hs[k]; if( h<=cascThr ) break;
-//	  }
-//	} else {
-//	  // general case (variable tree depth)
-//	  for( int t = 0; t < nTrees; t++ ) {
-//		uint32 offset=t*nTreeNodes, k=offset, k0=k;
-//		while( child[k] ) {
-//		  float ftr = chns1[cids[fids[k]]];
-//		  k = (ftr<thrs[k]) ? 1 : 0;
-//		  k0 = k = child[k0]-k+offset;
-//		}
-//		h += hs[k]; if( h<=cascThr ) break;
-//	  }
-//	}
-//	if(h>cascThr) { cs.push_back(c); rs.push_back(r); hs1.push_back(h); }
-//	}
-//	delete [] cids; m=cs.size();
-//
-//	// convert to bbs
-//	plhs[0] = mxCreateNumericMatrix(m,5,mxDOUBLE_CLASS,mxREAL);
-//	double *bbs = (double*) mxGetData(plhs[0]);
-//	for( int i=0; i<m; i++ ) {
-//	bbs[i+0*m]=cs[i]*stride; bbs[i+2*m]=modelWd;
-//	bbs[i+1*m]=rs[i]*stride; bbs[i+3*m]=modelHt;
-//	bbs[i+4*m]=hs1[i];
-//	}
+	int shrink = this->_shrink;
+	const int modelHt = this->_modelDsPad.height;
+	const int modelWd = this->_modelDsPad.width;
+	const int stride = this->_stride;
+	const float cascThr = this->_cascThr;
+
+	// extract relevant fields from trees
+	float *thrs =  this->_clf->thrs;
+	float *hs =  this->_clf->hs;
+	uint32 *fids = this->_clf->fids;
+	uint32 *child = this->_clf->child;
+	const int treeDepth = this->_clf->treeDepth;
+	const int nTreeNodes = (int) this->_clf->nTreeNodes;
+	const int nTrees = (int) this->_clf->nTrees;
+
+//	float *chns;//= chnImgs.data();// = (float*) mxGetData(prhs[0]);
+	const int height = rows;
+	const int width = cols;
+
+	// get dimensions and constants
+	const int nChns = nC;
+
+	const int height1 = (int) ceil(float(height*shrink-modelHt+1)/stride);
+	const int width1 = (int) ceil(float(width*shrink-modelWd+1)/stride);
+
+	// construct cids array
+	int nFtrs = modelHt/shrink*modelWd/shrink*nChns;
+	uint32 *cids = new uint32[nFtrs]; int m=0;
+	for( int z=0; z<nChns; z++ )
+		for( int c=0; c<modelWd/shrink; c++ )
+			for( int r=0; r<modelHt/shrink; r++ )
+				cids[m++] = z*width*height + c*height + r;
+
+	// apply classifier to each patch
+	vector<int> rs, cs; vector<float> hs1;
+	for( int c=0; c<width1; c++ )
+		for( int r=0; r<height1; r++ ) {
+			float h=0, *chns1=chns+(r*stride/shrink) + (c*stride/shrink)*height;
+			if( treeDepth==1 ) {
+				// specialized case for treeDepth==1
+					for( int t = 0; t < nTrees; t++ ) {
+						uint32 offset=t*nTreeNodes, k=offset, k0=0;
+						getChild(chns1,cids,fids,thrs,offset,k0,k);
+						h += hs[k]; if( h<=cascThr ) break;
+					}
+				} else if( treeDepth==2 ) {
+					// specialized case for treeDepth==2
+					for( int t = 0; t < nTrees; t++ ) {
+						uint32 offset=t*nTreeNodes, k=offset, k0=0;
+						getChild(chns1,cids,fids,thrs,offset,k0,k);
+						getChild(chns1,cids,fids,thrs,offset,k0,k);
+						h += hs[k]; if( h<=cascThr ) break;
+					}
+				} else if( treeDepth>2) {
+					// specialized case for treeDepth>2
+					for( int t = 0; t < nTrees; t++ ) {
+						uint32 offset=t*nTreeNodes, k=offset, k0=0;
+						for( int i=0; i<treeDepth; i++ )
+							getChild(chns1,cids,fids,thrs,offset,k0,k);
+							h += hs[k]; if( h<=cascThr ) break;
+						}
+				} else {
+					// general case (variable tree depth)
+					for( int t = 0; t < nTrees; t++ ) {
+						uint32 offset=t*nTreeNodes, k=offset, k0=k;
+						while( child[k] ) {
+							float ftr = chns1[cids[fids[k]]];
+							k = (ftr<thrs[k]) ? 1 : 0;
+							k0 = k = child[k0]-k+offset;
+						}
+						h += hs[k]; if( h<=cascThr ) break;
+					}
+				}
+				if(h>cascThr) { cs.push_back(c); rs.push_back(r); hs1.push_back(h); }
+		}
+	delete [] cids;
+
+	int nBB=cs.size();
+	// convert to bbs
+	for( int i=0; i<nBB; i++ ) {
+		BoundingBox bb(cs[i]*stride,rs[i]*stride,modelWd,modelHt,hs1[i]);
+		bbs.push_back(bb);
+//		bbs[i+0*m]=cs[i]*stride;
+//		bbs[i+2*m]=modelWd;
+//		bbs[i+1*m]=rs[i]*stride;
+//		bbs[i+3*m]=modelHt;
+//		bbs[i+4*m]=hs1[i];
+	}
 }
 
 void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,Mat image){
 	OUT("detect image");
-
+//	Pyramid* pyramid = this->getPyramid();
+//	vector<vector<Mat> > datas;
+////	pyramid->computeData(image,datas);
+//	vector<Mat> oneScale;
+//	datas.push_back(oneScale);
+//	datas.push_back(oneScale);
+//	for(int i=0;i<datas.size();i++){//detect all scales
+//		vector<BoundingBox> currentScalesRes;
+//		int nChns;
+//		int rows = datas[i][0].rows;
+//		int cols = datas[i][0].cols;
+//		float chns[nChns*rows*cols];
+//		for(int cIdx = 0;cIdx<nChns;cIdx++){
+//			int chnOff = i*rows*cols;
+//			for(int c=0;c<cols;c++){
+//				int colOff = c*rows;
+//				for(int r=0;r<rows;r++){
+//					chns[chnOff+colOff+r] = datas[i][cIdx].at<float>(r,c);
+//				}
+//			}
+//		}
+//		detectOneScale(currentScalesRes,chns,rows,cols,nChns);
+//	}
 }
-
 
 
 void ACFDetector::train(){
@@ -250,13 +278,3 @@ void ACFDetector::train(){
 void ACFDetector::test(){
 	OUT("test module here");
 }
-
-inline void getChild( float *chns1, uint32 *cids, uint32 *fids,
-  float *thrs, uint32 offset, uint32 &k0, uint32 &k ){
-  float ftr = chns1[cids[fids[k]]];
-  k = (ftr<thrs[k]) ? 1 : 2;
-  k0=k+=k0*2; k+=offset;
-}
-
-
-
