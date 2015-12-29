@@ -10,6 +10,7 @@
 
 #include "common.h"
 #include "../detector/ACFDetector.h"
+#include "Util.h"
 extern "C"{
 #include "matio.h"
 }

@@ -11,10 +11,6 @@
 
 using namespace acf;
 using namespace std;
-using cv::Size;
-using cv::Mat;
-
-
 
 ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
 	this->_builder = builder;
@@ -101,7 +97,7 @@ ACFDetector::Builder* ACFDetector::Builder::modelDs(Size size){
 	return this;
 }
 
-ACFDetector::Builder* ACFDetector::Builder::modelDsPad(cv::Size size){
+ACFDetector::Builder* ACFDetector::Builder::modelDsPad(Size size){
 	this->_modelDsPad = size;
 	return this;
 }
@@ -150,7 +146,7 @@ inline void getChild( float *chns1, uint32 *cids, uint32 *fids,
 /**
  *
  */
-void ACFDetector::detectOneScale(std::vector<BoundingBox>& bbs,float* chns,int rows,int cols,int nC){
+void ACFDetector::detectOneScale(vector<BoundingBox>& bbs,float* chns,int rows,int cols,int nC){
 	OUT("Detect One Scale");
 	//  // get inputs
 	int shrink = this->_shrink;
@@ -243,17 +239,14 @@ void ACFDetector::detectOneScale(std::vector<BoundingBox>& bbs,float* chns,int r
 	}
 }
 
-void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,Mat image){
+void ACFDetector::detectImg(vector<BoundingBox>& bbs,MatrixD& image){
 	OUT("detect image");
-//	Pyramid* pyramid = this->getPyramid();
-//	vector<vector<Mat> > datas;
-////	pyramid->computeData(image,datas);
-//	vector<Mat> oneScale;
-//	datas.push_back(oneScale);
-//	datas.push_back(oneScale);
-//	for(int i=0;i<datas.size();i++){//detect all scales
-//		vector<BoundingBox> currentScalesRes;
-//		int nChns;
+	Pyramid* pyramid = this->getPyramid();
+	vector<vector<MatrixD*> > datas;
+	pyramid->computeData(image,datas);
+	for(int i=0;i<datas.size();i++){//detect all scales
+		vector<BoundingBox> currentScalesRes;
+/**		int nChns;
 //		int rows = datas[i][0].rows;
 //		int cols = datas[i][0].cols;
 //		float chns[nChns*rows*cols];
@@ -266,8 +259,13 @@ void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,Mat image){
 //				}
 //			}
 //		}
+ *
+ */
 //		detectOneScale(currentScalesRes,chns,rows,cols,nChns);
-//	}
+		vector<MatrixD*> oneScale = datas[i];
+		for(int j=0;j<oneScale.size();j++)
+			delete oneScale[j];
+	}
 }
 
 

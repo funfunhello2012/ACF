@@ -8,6 +8,7 @@
 
 #include "../src/detector/ACFDetector.h"
 #include "../src/Util/common.h"
+#include "../src/Util/Util.h"
 #include "../src//features/chnsCompute/Channel.h"
 #include "../src/features/pyramid.h"
 #include "../src/Util/IODetector.h"
@@ -20,13 +21,14 @@ void testLoadUseCase(){
 	ACFDetector detector  =  loadDetectorFromMat("/home/edison/workspace/acfImplement/ACF/data/AcfInriaDetector.mat");
 //	ACFDetector detector  =  loadDetectorFromJson("");
 	vector<BoundingBox> bbs;
-	Mat image = imread("./data/I00000.png");
+//	Mat image = imread("./data/I00000.png");
+	MatrixD image(3,4);
 	detector.detectImg(bbs,image);
 }
 
 class ChnCustom: public Chn{
 public:
-	void compute(){
+	void compute(MatrixD& img){
 		OUT("Custom compute");
 	}
 };
@@ -34,13 +36,13 @@ public:
 void testTrainTestUseCase(){
 	ACFDetector::Builder* builder = new ACFDetector::Builder("detectorName","posDir","gtDir");
 	ACFDetector detector = builder->build();
-	Mat img;
+	MatrixD img(2,3);
 	ChnsManager* chnsManager = detector.getChnsManager();
 	Pyramid* pyramid = detector.getPyramid();
 	Chn* chn  = new ChnCustom();
 	chnsManager->addChn(chn);
-	vector<vector<Mat> > datas;
-//	pyramid->computeData(img,datas);
+	vector<vector<MatrixD*> > datas;
+	pyramid->computeData(img,datas);
 	detector.train();
 	detector.test();
 }

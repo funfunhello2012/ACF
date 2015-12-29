@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Util/common.h"
+#include "../Util/Util.h"
 
 using namespace cv;
 #include "chnsCompute/Channel.h"
@@ -26,7 +27,7 @@ public:
 		Pyramid(NULL);
 	}
 	~Pyramid(){}
-	void computeData(Mat image,vector<vector <Mat> >& data);
+	void computeData(acf::MatrixD& image,vector<vector<acf::MatrixD*> >& data);
 	//get methods
 	ChnsManager* getChnsManager()
 	{
@@ -48,11 +49,11 @@ public:
 	{
 		return nApprox;
 	}
-	Size getpad()
+	acf::Size getpad()
 	{
 		return pad;
 	}
-	Size getminDs()
+	acf::Size getminDs()
 	{
 		return minDs;
 	}
@@ -101,11 +102,11 @@ public:
 	void setnApprox(int a){
 		nApprox = a;
 	}
-	void setpad(Size p)
+	void setpad(acf::Size p)
 	{
 		pad=p;
 	}
-	void setminDs(Size mins)
+	void setminDs(acf::Size mins)
 	{
 		minDs=mins;
 	}
@@ -117,8 +118,8 @@ private:
 	int nOctUp;       // [0] number of upsampled octaves to compute
 	int nApprox;      //[-1] number of approx. scales (if -1 nApprox=nPerOct-1)
 //	float* lambdas;      // [] coefficients for power law scaling (see BMVC10)
-	Size pad;          // [0 0] amount to pad channels (along T/B and L/R)
-	Size minDs;        // [16 16] minimum image size for channel computation
+	acf::Size pad;          // [0 0] amount to pad channels (along T/B and L/R)
+	acf::Size minDs;        // [16 16] minimum image size for channel computation
 	int smooth;       //[1] radius for channel smoothing (using convTri)
 	bool concat;       //[1] if true concatenate channels
 	bool complete;     // [] if true does not check/set default vals in pPyramid

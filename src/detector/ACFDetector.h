@@ -50,8 +50,8 @@ public:
 		std::string _negImgDir = "";
 		std::string _posWinDir = "";
 		std::string _negWinDir = "";
-		cv::Size _modelDs = cv::Size(100,41);
-		cv::Size _modelDsPad = cv::Size(128,64);
+		Size _modelDs = Size(100,41);
+		Size _modelDsPad = Size(128,64);
 		int _stride = 4;
 		int _shrink =  4;
 		double _cascThr = -1;
@@ -65,8 +65,8 @@ public:
 		Builder* negImgDir(std::string negDir);
 		Builder* posWinDir(std::string posWinDir);
 		Builder* negWinDir(std::string negWinDir);
-		Builder* modelDs(cv::Size size);
-		Builder* modelDsPad(cv::Size size);
+		Builder* modelDs(Size size);
+		Builder* modelDsPad(Size size);
 		Builder* stride(int s);
 		Builder* shrink(int s);
 		Builder* cascThr(double t);
@@ -80,7 +80,7 @@ public:
 	friend std::ostream& operator<<(std::ostream&os ,const ACFDetector& d);
 	void train();
 	void test();
-	void detectImg(std::vector<BoundingBox>& bbs,cv::Mat image);
+	void detectImg(std::vector<BoundingBox>& bbs,MatrixD& image);
 	Pyramid* getPyramid(){
 		return this->_pyramid;
 	}
@@ -96,8 +96,8 @@ private:
 	std::string _negImgDir;
 	std::string _posWinDir;
 	std::string _negWinDir;
-	cv::Size _modelDs;
-	cv::Size _modelDsPad;
+	Size _modelDs;
+	Size _modelDsPad;
 	int _stride;
 	int _shrink;
 	double _cascThr;

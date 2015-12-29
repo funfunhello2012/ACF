@@ -7,7 +7,6 @@
 #include "IODetector.h"
 using namespace acf;
 using namespace std;
-using cv::Size;
 
 ACFDetector acf::loadDetectorFromMat(const string matPath){
 	OUT("load detector from .mat "+matPath);
@@ -344,7 +343,7 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 			matvar_t* info_pChn_clipHog = Mat_VarGetStructFieldByName(info_pChn,"clipHog",0);
 			double * clipHog = (double *)info_pChn_clipHog->data;
 			OUT_V(*clipHog);
-			GradChn * gradChn = new GradChn(*shrink,*nOrients,*softBin,*useHog,*clipHog); //need a NULL mat Constructor
+			GradHistChn * gradChn = new GradHistChn(*shrink,*nOrients,*softBin,*useHog,*clipHog); //need a NULL mat Constructor
 			chnsM->addChn(luvChn);
 			chnsM->addChn(magChn);
 			chnsM->addChn(gradChn);

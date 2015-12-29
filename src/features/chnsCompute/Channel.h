@@ -3,6 +3,7 @@
 // 这里提供了积分通道图的三种特征，可以通过继承抽象类Chn 添加自定义通道
 
 #include "../../Util/common.h"
+#include "../../Util/Util.h"
 
 // abstract base class
 class Chn {
@@ -11,16 +12,14 @@ public:
 		enabled = e;
 	}
 	Chn(): enabled(true), pad(0), padType(NONE){}
-	Chn(Mat img): enabled(true), pad(0), padType(NONE){
-		img.copyTo(this -> img);
+//	Chn(Mat img): enabled(true), pad(0), padType(NONE){
+//		img.copyTo(this -> img);
+//	}
+	virtual void compute(acf::MatrixD& img) = 0;
+	virtual  ~Chn(){};
+	acf::MatrixD* data(){
+		return chnImg;
 	}
-	virtual void compute() = 0;
-	virtual  ~Chn() {}
-	Mat data(){
-		return img;
-	}
-private:
-
 
 protected:
 	bool 	enabled;
@@ -30,7 +29,7 @@ protected:
 	int		pad;	 // pad value
 	typedef enum{NONE,REPLICATE,SYMMETRIC,CIRCULAR} padType_e;
 	padType_e padType;
-	Mat img; // 输入时拷贝到类内部，在内部进行处理  // 需要修改为引用外部，该类只负责提供计算方法
+	acf::MatrixD* chnImg; // 输入时拷贝到类内部，在内部进行处理  // 需要修改为引用外部，该类只负责提供计算方法
 };
 
 class ColorChn : public Chn { // 颜色通道，三个分量
@@ -46,12 +45,12 @@ public:
 	// %     .smooth       - [1] radius for image smoothing (using convTri)
 	// %     .colorSpace   - ['luv'] choices are: 'gray', 'rgb', 'hsv', 'orig'
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	ColorChn(Mat img, int colorSpace = CV_BGR2Luv, int smooth = 1) :
-		Chn(img), colorSpace(colorSpace), smooth(smooth){
-			strcpy(name,  "color channels");
-			padType = REPLICATE;
-	}
-	void compute();
+//	ColorChn(Mat img, int colorSpace = CV_BGR2Luv, int smooth = 1) :
+//		Chn(img), colorSpace(colorSpace), smooth(smooth){
+//			strcpy(name,  "color channels");
+//			padType = REPLICATE;
+//	}
+	void compute(acf::MatrixD& img);
 private:
 	int colorSpace;
 	int smooth;
@@ -60,6 +59,11 @@ private:
 
 class GradHistChn : public Chn { // 颜色通道，三个分量
 public:
+	GradHistChn(int _nOrients = 6) :
+		binSize(8), nOrients(_nOrients),softBin(0), clipHog(.2),useHog(false){
+			strcpy(name,  "Gradient Histogram Channels");
+			padType = REPLICATE;
+	}
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// %   .pGradHist    - parameters for gradient histograms:
 	// %     .enabled      - [1] if true enable gradient histogram channels
@@ -69,37 +73,31 @@ public:
 	// %     .useHog       - [0] if true perform 4-way hog normalization/clipping
 	// %     .clipHog      - [.2] value at which to clip hog histogram bins
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	GradHistChn(Mat img, int _nOrients = 6) :
-		Chn(img), binSize(8), nOrients(_nOrients),softBin(0), clipHog(.2){
-			strcpy(name,  "Gradient Histogram Channels");
-			padType = REPLICATE;
+	GradHistChn(int binS,int nO,bool softB,bool useH,double cH) :
+		Chn(),binSize(binS),nOrients(nO),softBin(softB),clipHog(cH),useHog(useH){
+			strcpy(name,  "gradient histogram");
 	}
+//	GradHistChn(Mat img, int _nOrients = 6) :
+//		Chn(img), binSize(8), nOrients(_nOrients),softBin(0), clipHog(.2){
+//			strcpy(name,  "Gradient Histogram Channels");
+//			padType = REPLICATE;
+//	}
 
-	void compute();
+	void compute(acf::MatrixD& img);
 private: // settings
 	int binSize;
 	unsigned int nOrients;
 	bool softBin;
 	float clipHog;
-};
-
-class ChnsManager{
-
-public:
-	ChnsManager(){};
-	void addChn(Chn* ch){
-		OUT("add channel");
-	}
-
-
-
-	void compute(Mat& chnDatas,Mat image){
-		OUT( "compute channle data");
-	}
+	bool useHog;
 };
 
 class MagChn : public Chn { // 颜色通道，三个分量
 public:
+	MagChn(int normR=5) :
+		Chn(),colorChnUsed(true),normRad(normR),normConst(0.005),full(true){
+			strcpy(name,  "gradient magnitude");
+	}
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	//	%   .pGradMag     - parameters for gradient magnitude:
 	//	%     .enabled      - [1] if true enable gradient magnitude channel
@@ -112,7 +110,7 @@ public:
 		Chn(),colorChnUsed(colorUsed),normRad(normR),normConst(normC),full(f){
 			strcpy(name,  "gradient magnitude");
 	}
-	void compute();
+	void compute(acf::MatrixD& img);
 private:
 	bool colorChnUsed;
 	int normRad;
@@ -120,26 +118,17 @@ private:
 	bool full;
 };
 
-class GradChn : public Chn { // 颜色通道，三个分量
-public:
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	//	%   .pGradHist    - parameters for gradient histograms:
-	//	%     .enabled      - [1] if true enable gradient histogram channels
-	//	%     .binSize      - [shrink] spatial bin size (defaults to shrink)
-	//	%     .nOrients     - [6] number of orientation channels
-	//	%     .softBin      - [0] if true use "soft" bilinear spatial binning
-	//	%     .useHog       - [0] if true perform 4-way hog normalization/clipping
-	//	%     .clipHog      - [.2] value at which to clip hog histogram bins
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	GradChn(int binS,int nO,bool softB,bool useH,double cH) :
-		Chn(),binSize(binS),nOrients(nO),softBin(softB),useHog(useH),clipHog(cH){
-			strcpy(name,  "gradient histogram");
-	}
-	void compute();
+class ChnsManager{
 private:
-	int binSize;
-	int nOrients;
-	bool softBin;
-	bool useHog;
-	double clipHog;
+	std::vector<Chn*> chns;
+public:
+	ChnsManager(){	};
+	void addChn(Chn* ch){
+		OUT("add channel");
+		chns.push_back(ch);
+	}
+
+	void compute(std::vector<acf::MatrixD*>& chnDatas,acf::MatrixD& image);
 };
+
+
