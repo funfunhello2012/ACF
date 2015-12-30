@@ -32,6 +32,7 @@
 		#define	TEST_CHANNEL		2
 		#define  TEST_PYRAMID		3
 		#define  TEST_IO						4
+		 #define  TEST_MEX				5
 		// add your test cases here
 		// #define  TEST_XXXXX		  N
 

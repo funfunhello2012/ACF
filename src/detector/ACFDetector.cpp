@@ -246,25 +246,24 @@ void ACFDetector::detectImg(vector<BoundingBox>& bbs,MatrixD& image){
 	pyramid->computeData(image,datas);
 	for(int i=0;i<datas.size();i++){//detect all scales
 		vector<BoundingBox> currentScalesRes;
-/**		int nChns;
-//		int rows = datas[i][0].rows;
-//		int cols = datas[i][0].cols;
-//		float chns[nChns*rows*cols];
-//		for(int cIdx = 0;cIdx<nChns;cIdx++){
-//			int chnOff = i*rows*cols;
-//			for(int c=0;c<cols;c++){
-//				int colOff = c*rows;
-//				for(int r=0;r<rows;r++){
-//					chns[chnOff+colOff+r] = datas[i][cIdx].at<float>(r,c);
-//				}
-//			}
-//		}
- *
- */
-//		detectOneScale(currentScalesRes,chns,rows,cols,nChns);
 		vector<MatrixD*> oneScale = datas[i];
-		for(int j=0;j<oneScale.size();j++)
-			delete oneScale[j];
+//		assert(oneScale.size()==1);	//the data should be put into one matrix
+		detectOneScale(currentScalesRes,oneScale[0]->datas,oneScale[0]->rows,oneScale[0]->cols,oneScale[0]->nChns);
+		delete oneScale[0];
+		/**		int nChns;
+		//		int rows = datas[i][0].rows;
+		//		int cols = datas[i][0].cols;
+		//		float chns[nChns*rows*cols];
+		//		for(int cIdx = 0;cIdx<nChns;cIdx++){
+		//			int chnOff = i*rows*cols;
+		//			for(int c=0;c<cols;c++){
+		//				int colOff = c*rows;
+		//				for(int r=0;r<rows;r++){
+		//					chns[chnOff+colOff+r] = datas[i][cIdx].at<float>(r,c);
+		//				}
+		//			}
+		//		}
+		 */
 	}
 }
 

@@ -100,7 +100,7 @@ public:
 	}
 };
 
-typedef Matrix<double> MatrixD;
+typedef Matrix<float> MatrixD;
 
 }
 #endif /* SRC_UTIL_UTIL_H_ */

@@ -48,8 +48,6 @@ void testTrainTestUseCase(){
 }
 
 
-
-
 #if NOW_TESTING == TEST_ALL
 int main( int argc, char** argv ){
 	testLoadUseCase();
