@@ -50,9 +50,9 @@ private:
 //	int* index;
 //	Matrix& operator=(const Matrix& m);
 public:
-	const int cols;
-	const int rows;
-	const int nChns;
+	int cols;
+	int rows;
+	int nChns;
 	dataType* datas;
 	Matrix(int c,int r,int nC=1):cols(c),rows(r),nChns(nC){
 		assert(c>0&&r>0&&nC>0);
@@ -76,10 +76,19 @@ public:
 //			}
 //		}
 	}
+	Matrix():cols(0),rows(0),nChns(0){
+		OUT("Matrix()");
+		chOffset = 0;
+		colOffset = 0;
+		datas = NULL;
+		refCount = new int;
+		*refCount = 0;
+	}
 	Matrix(const Matrix& m):cols(m.cols),rows(m.rows),nChns(m.nChns){
 		chOffset = m.chOffset;
 		colOffset = m.colOffset;
 		datas = m.datas;
+		refCount = m.refCount;
 		(*refCount)++;
 	}
 	~Matrix(){
@@ -92,11 +101,34 @@ public:
 		}
 //		delete[] index;
 	}
+	void setData(dataType* d,int w,int h,int c){
+		assert(this->datas==NULL);
+		this->datas = d;
+		this->rows = h;
+		this->cols = w;
+		this->nChns = c;
+		this->chOffset = rows*cols;
+		this->colOffset = rows;
+		(*refCount)++;
+	}
+
 	dataType at(int c,int r,int ch){
 		if((c<0||c>cols) ||(r<0||r>rows) ||(ch<0||ch>nChns) ){
 			throw std::range_error("Invalid Index");
 		}
 		return datas[ch*chOffset+c*colOffset+r];
+	}
+	friend std::ostream& operator<<(std::ostream&os ,const Matrix& m){
+		os << "Mat *refCount="<< *(m.refCount)<< "\t[" << m.rows << " X " << m.cols << " X " << m.nChns << "]:\n";
+		for(int i=0;i<m.nChns;i++){
+			for(int r=0;r<m.rows;r++){
+				for(int c=0;c<m.cols;c++)
+					os << m.datas[i*m.chOffset+c*m.colOffset+r] << "\t";
+				os << "\n";
+			}
+			os << "\n";
+		}
+		return os;
 	}
 };
 

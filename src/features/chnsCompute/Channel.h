@@ -11,7 +11,11 @@ public:
 	void setEnabled(bool e){
 		enabled = e;
 	}
-	Chn(): enabled(true), pad(0), padType(NONE){}
+
+	void setShrink(int s){
+		shrink = s;
+	}
+	Chn(): enabled(true), shrink(2),pad(0), padType(NONE){}
 //	Chn(Mat img): enabled(true), pad(0), padType(NONE){
 //		img.copyTo(this -> img);
 //	}
@@ -25,6 +29,7 @@ protected:
 	bool 	enabled;
 	char	name[20]; // 注意，通道名称不能超过20个字符
 	
+	int shrink;
 	// padWith
 	int		pad;	 // pad value
 	typedef enum{NONE,REPLICATE,SYMMETRIC,CIRCULAR} padType_e;

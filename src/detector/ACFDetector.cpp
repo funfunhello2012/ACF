@@ -249,7 +249,7 @@ void ACFDetector::detectImg(vector<BoundingBox>& bbs,MatrixD& image){
 		vector<MatrixD*> oneScale = datas[i];
 //		assert(oneScale.size()==1);	//the data should be put into one matrix
 		detectOneScale(currentScalesRes,oneScale[0]->datas,oneScale[0]->rows,oneScale[0]->cols,oneScale[0]->nChns);
-		delete oneScale[0];
+		delete oneScale[0];	//resize the data in pyramid and all chn datas in one MatrixD;
 		/**		int nChns;
 		//		int rows = datas[i][0].rows;
 		//		int cols = datas[i][0].cols;

@@ -33,6 +33,7 @@
 		#define  TEST_PYRAMID		3
 		#define  TEST_IO						4
 		 #define  TEST_MEX				5
+		 #define  TEST_MAT				6
 		// add your test cases here
 		// #define  TEST_XXXXX		  N
 

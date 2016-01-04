@@ -1,7 +1,10 @@
 ﻿
+#include "mex/rgbConvertMex.hpp"
+#include "mex/gradientMex.hpp"
+#include "mex/wrappers.hpp"
 #include "Channel.h"
 
-#include <opencv2/objdetect/objdetect.hpp> // HOG Note: add opencv_objdetect to GCC linker setting
+//#include <opencv2/objdetect/objdetect.hpp> // HOG Note: add opencv_objdetect to GCC linker setting
 
 //using namespace cv;
 using namespace std;
@@ -9,12 +12,26 @@ using namespace acf;
 
 void ColorChn::compute(acf::MatrixD& img){
 	OUT("CololChn::compute");
-	this->chnImg = new MatrixD(img.cols,img.rows);
+//	this->chnImg = new MatrixD(img.cols,img.rows);
+	float*chnData = rgbConvert(img.datas,img.rows*img.cols,img.nChns,0,1.0f);
+	this->chnImg = new MatrixD();
+	this->chnImg->setData(chnData,img.cols,img.rows,img.nChns);
 }
 
 void GradHistChn::compute(acf::MatrixD& img){
 	OUT("GradHistChn::compute");
-	this->chnImg = new MatrixD(img.cols,img.rows);
+//	this->chnImg = new MatrixD(img.cols,img.rows);
+	this->chnImg = new MatrixD();
+	int h2 = img.rows/this->shrink;
+	int w2 = img.cols/this->shrink;
+	int h3 = h2/this->binSize;
+	int w3 = h2/this->binSize;
+	int nCh = img.nChns;
+	float* M =  (float*) wrCalloc(w2*h2*nCh,sizeof(float));
+	float* O =  (float*) wrCalloc(h2*w2*nCh,sizeof(float));
+	float* H = (float*) wrCalloc(h3*w3*nCh*6,sizeof(float));
+	gradHist(M,O,H,h2,w2,this->binSize,this->nOrients,0,1);
+	this->chnImg->setData(H,w3,h3,nCh);
 }
 //#if USE_MEX
 //extern void cvtColor2(Mat &II, Mat &JJ, int code);
@@ -95,7 +112,15 @@ void GradHistChn::compute(acf::MatrixD& img){
 //
 void MagChn::compute(acf::MatrixD& img){
 	OUT("Computing gradient magnitude");
-	this->chnImg = new MatrixD(img.cols,img.rows);
+//	this->chnImg = new MatrixD(img.cols,img.rows);
+	this->chnImg = new MatrixD();
+	int h2 = img.rows/this->shrink;
+	int w2 = img.cols/this->shrink;
+	int nCh = img.nChns;
+	float* M =  (float*) wrCalloc(w2*h2*nCh,sizeof(float));
+	float* O =  (float*) wrCalloc(h2*w2*nCh,sizeof(float));
+	gradMag(img.datas, M, O, h2, w2, nCh,1 );
+	this->chnImg->setData(M,h2,w2,nCh);
 }
 
 void ChnsManager::compute(std::vector<acf::MatrixD*>& chnDatas,acf::MatrixD& image){
