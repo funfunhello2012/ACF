@@ -134,129 +134,131 @@ void approxcompute(Mat &mat,float ratio)
 	}
 }
 
-void Pyramid:: computeData(Mat image,vector<vector <Mat>>& data){
-	int shrink=4;
-	float *scales;
-	int nScales;
-	Size size;
-	size.width=image.cols;
-	size.height=image.rows;
-	int ntypes=3;
-	float *lambdas;
-	if(nApprox<0)
-		nApprox=nPerOct-1;
-	/*
-	 * rgbconvert();
-	*/
+void Pyramid:: computeData(Mat image,vector<vector <Mat*>>& data){
+	OUT("Pyramid::computeData");
 
-
-	// get scales at which to compute features and list of real/approx scales
-	getScales(scales,nScales,nPerOct,nOctUp,minDs,4,size);
-	data=vector<vector <Mat>>(nScales,vector<Mat>(ntypes));
-	//cout<<nScales<<endl;
-	//for(int i=0;i<nScales;i++)
-		//cout<<scales[i]<<endl;
-	vector<int> isR,isA,j,isN;
-	for(int i=1;i<=nScales;i=i+nApprox+1)
-		isR.push_back(i);
-	for(int i=1;i<=nScales;i++)
-		isA.push_back(i);
-	for(int i=0;i<(int)isR.size();i++)
-		isA.erase(isA.begin()+(isR[i]-1-i));
-	j.push_back(0);
-	for(int i=0;i<(int)isR.size()-1;i++)
-		j.push_back((int)((isR[i]+isR[i+1])/2));
-	j.push_back(nScales);
-	for(int i=1;i<=nScales;i++)
-		isN.push_back(i);
-	for(int i=0;i<(int)isR.size();i++)
-		for(int k=j[i];k<j[i+1];k++)
-			isN[k]=isR[i];
-	/*for(int i=0;i<isN.size();i++)
-		cout<<isN[i]<<endl;*/
-	//compute image pyramid[real scales]
-
-	for(int i=0;i<(int)isR.size();i++)//
-	{
-		float s=scales[isR[i]-1];
-		Size sz1((int)((size.width*s/shrink)*shrink+0.5),(int)((size.height*s/shrink)*shrink+0.5));
-		//cout<<sz1.width<<"  "<<sz1.height<<endl;
-		Mat I1;
-		if(size.height==sz1.height&&size.width==size.width)
-		{
-			I1=image;
-			//cout<<I1.cols<<"  "<<I1.rows<<endl;
-		}
-		else
-		{
-			resize(image,I1,sz1,0,0,CV_INTER_LINEAR);
-			//cout<<I1.cols<<"  "<<I1.rows<<endl;
-		}
-		/*if(i==2)
-		{
-			imshow("WindowOrg",I1);
-			waitKey(10000);
-		}*/
-		if(s==0.5&&(nApprox>0||nPerOct==1))
-			image=I1;
-		
-
-			//data.push_back(d);
-		vector<Mat> p(ntypes);
-		//compute
-		data[isR[i]-1]=p;
-	}
-	
-	//if lambdas not specified compute image specific lambdas
-	lambdas=(float*)malloc(ntypes*sizeof(float));
-	if(nScales>0&&nApprox>0)
-	{
-		vector<int> is,istmp;
-		for(int i=1+nOctUp*nPerOct;i<=nScales;i=i+nApprox+1)
-			istmp.push_back(i);
-		if(istmp.size()>2)
-		{
-			is.push_back(istmp[1]);
-			is.push_back(istmp[2]);
-		}
-		vector<Mat> d0=data[is[0]-1];
-		vector<Mat> dd0=data[is[1]-1];
-		float *matsum1=(float*)malloc(ntypes*sizeof(float));
-		float *matsum2=(float*)malloc(ntypes*sizeof(float));
-		lambdas=(float*)malloc(ntypes*sizeof(float));
-		for(int i=0;i<ntypes;i++)
-		{
-			matsum1[i]=getmat_sum(d0[i]);
-			matsum2[i]=getmat_sum(dd0[i]);
-			//cout<<matsum1[i]<<"  "<<matsum2[i]<<"  "<<endl;
-			lambdas[i]=(float)(-log10((double)(matsum1[i]/matsum2[i]))/log10((double)2))/(log10((double)(scales[is[0]-1]/scales[is[1]-1])/log10((double)2)));
-			//cout<<scales[istmp[1]-1]<<"  "<<scales[istmp[2]-1]<<"  "<<lambdas[i]<<"  ";
-		}
-
-		//cout<<is[0]<<" "<<is[1]<<endl;
-	}
-	//cocompute image pyramid [approximated scales]
-	for(int i=0;i<(int)isA.size();i++)
-	{
-		int iR=isN[isA[i]-1];
-		//cout<<(int)(iR/nPerOct)<<endl;
-		float s=scales[isA[i]-1];
-		Size sz1((int)((size.width*s/shrink)*shrink+0.5),(int)((size.height*s/shrink)*shrink+0.5));
-		//resize(image,I1,sz1,0,0,CV_INTER_LINEAR);
-		vector<Mat> m1=data[iR-1];
-		for(int j=0;j<ntypes;j++)
-		{
-			float ratio=pow(scales[isA[i]-1]/scales[iR-1],-lambdas[j]);
-
-			Mat m11;//
-			resize(m1[j],m11,sz1,0,0,CV_INTER_LINEAR);
-			approxcompute(m11,ratio);
-			m1.push_back(m11);
-		}
-		data[isA[i]-1]=m1;
-	}
-	
-	//smooth channels, optionally pad and concatenate channels
+//	int shrink=4;
+//	float *scales;
+//	int nScales;
+//	Size size;
+//	size.width=image.cols;
+//	size.height=image.rows;
+//	int ntypes=3;
+//	float *lambdas;
+//	if(nApprox<0)
+//		nApprox=nPerOct-1;
+//	/*
+//	 * rgbconvert();
+//	*/
+//
+//
+//	// get scales at which to compute features and list of real/approx scales
+//	getScales(scales,nScales,nPerOct,nOctUp,minDs,4,size);
+//	data=vector<vector <Mat>>(nScales,vector<Mat>(ntypes));
+//	//cout<<nScales<<endl;
+//	//for(int i=0;i<nScales;i++)
+//		//cout<<scales[i]<<endl;
+//	vector<int> isR,isA,j,isN;
+//	for(int i=1;i<=nScales;i=i+nApprox+1)
+//		isR.push_back(i);
+//	for(int i=1;i<=nScales;i++)
+//		isA.push_back(i);
+//	for(int i=0;i<(int)isR.size();i++)
+//		isA.erase(isA.begin()+(isR[i]-1-i));
+//	j.push_back(0);
+//	for(int i=0;i<(int)isR.size()-1;i++)
+//		j.push_back((int)((isR[i]+isR[i+1])/2));
+//	j.push_back(nScales);
+//	for(int i=1;i<=nScales;i++)
+//		isN.push_back(i);
+//	for(int i=0;i<(int)isR.size();i++)
+//		for(int k=j[i];k<j[i+1];k++)
+//			isN[k]=isR[i];
+//	/*for(int i=0;i<isN.size();i++)
+//		cout<<isN[i]<<endl;*/
+//	//compute image pyramid[real scales]
+//
+//	for(int i=0;i<(int)isR.size();i++)//
+//	{
+//		float s=scales[isR[i]-1];
+//		Size sz1((int)((size.width*s/shrink)*shrink+0.5),(int)((size.height*s/shrink)*shrink+0.5));
+//		//cout<<sz1.width<<"  "<<sz1.height<<endl;
+//		Mat I1;
+//		if(size.height==sz1.height&&size.width==size.width)
+//		{
+//			I1=image;
+//			//cout<<I1.cols<<"  "<<I1.rows<<endl;
+//		}
+//		else
+//		{
+//			resize(image,I1,sz1,0,0,CV_INTER_LINEAR);
+//			//cout<<I1.cols<<"  "<<I1.rows<<endl;
+//		}
+//		/*if(i==2)
+//		{
+//			imshow("WindowOrg",I1);
+//			waitKey(10000);
+//		}*/
+//		if(s==0.5&&(nApprox>0||nPerOct==1))
+//			image=I1;
+//
+//
+//			//data.push_back(d);
+//		vector<Mat> p(ntypes);
+//		//compute
+//		data[isR[i]-1]=p;
+//	}
+//
+//	//if lambdas not specified compute image specific lambdas
+//	lambdas=(float*)malloc(ntypes*sizeof(float));
+//	if(nScales>0&&nApprox>0)
+//	{
+//		vector<int> is,istmp;
+//		for(int i=1+nOctUp*nPerOct;i<=nScales;i=i+nApprox+1)
+//			istmp.push_back(i);
+//		if(istmp.size()>2)
+//		{
+//			is.push_back(istmp[1]);
+//			is.push_back(istmp[2]);
+//		}
+//		vector<Mat> d0=data[is[0]-1];
+//		vector<Mat> dd0=data[is[1]-1];
+//		float *matsum1=(float*)malloc(ntypes*sizeof(float));
+//		float *matsum2=(float*)malloc(ntypes*sizeof(float));
+//		lambdas=(float*)malloc(ntypes*sizeof(float));
+//		for(int i=0;i<ntypes;i++)
+//		{
+//			matsum1[i]=getmat_sum(d0[i]);
+//			matsum2[i]=getmat_sum(dd0[i]);
+//			//cout<<matsum1[i]<<"  "<<matsum2[i]<<"  "<<endl;
+//			lambdas[i]=(float)(-log10((double)(matsum1[i]/matsum2[i]))/log10((double)2))/(log10((double)(scales[is[0]-1]/scales[is[1]-1])/log10((double)2)));
+//			//cout<<scales[istmp[1]-1]<<"  "<<scales[istmp[2]-1]<<"  "<<lambdas[i]<<"  ";
+//		}
+//
+//		//cout<<is[0]<<" "<<is[1]<<endl;
+//	}
+//	//cocompute image pyramid [approximated scales]
+//	for(int i=0;i<(int)isA.size();i++)
+//	{
+//		int iR=isN[isA[i]-1];
+//		//cout<<(int)(iR/nPerOct)<<endl;
+//		float s=scales[isA[i]-1];
+//		Size sz1((int)((size.width*s/shrink)*shrink+0.5),(int)((size.height*s/shrink)*shrink+0.5));
+//		//resize(image,I1,sz1,0,0,CV_INTER_LINEAR);
+//		vector<Mat> m1=data[iR-1];
+//		for(int j=0;j<ntypes;j++)
+//		{
+//			float ratio=pow(scales[isA[i]-1]/scales[iR-1],-lambdas[j]);
+//
+//			Mat m11;//
+//			resize(m1[j],m11,sz1,0,0,CV_INTER_LINEAR);
+//			approxcompute(m11,ratio);
+//			m1.push_back(m11);
+//		}
+//		data[isA[i]-1]=m1;
+//	}
+//
+//	//smooth channels, optionally pad and concatenate channels
 }
 
 

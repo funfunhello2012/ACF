@@ -36,7 +36,7 @@
 		// #define  TEST_XXXXX		  N
 
 		// specify what is testing now
-		#define NOW_TESTING	TEST_CHANNEL//TEST_ALL
+		#define NOW_TESTING	TEST_ALL
 
 		#define OUT(x)  do{ std::cout << x << std::endl;}while(0)
 		#define OUT_V(x)  do{ std::cout << #x << ":" << x << std::endl;}while(0)

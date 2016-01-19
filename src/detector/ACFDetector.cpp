@@ -243,11 +243,11 @@ void ACFDetector::detectOneScale(std::vector<BoundingBox>& bbs,float* chns,int r
 	}
 }
 
-void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,Mat image){
+void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,cv::Mat image){
 	OUT("detect image");
-//	Pyramid* pyramid = this->getPyramid();
-//	vector<vector<Mat> > datas;
-////	pyramid->computeData(image,datas);
+	Pyramid* pyramid = this->getPyramid();
+	vector<vector<Mat*> > datas;
+	pyramid->computeData(image,datas);
 //	vector<Mat> oneScale;
 //	datas.push_back(oneScale);
 //	datas.push_back(oneScale);
