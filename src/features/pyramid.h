@@ -27,7 +27,7 @@ public:
 		Pyramid(NULL);
 	}
 	~Pyramid(){}
-	void computeData(acf::MatrixD& image,vector<vector<acf::MatrixD*> >& data);
+	void computeData(Mat image,vector<vector<Mat*> >& data);
 	//get methods
 	ChnsManager* getChnsManager()
 	{
