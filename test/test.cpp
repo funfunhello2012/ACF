@@ -27,7 +27,7 @@ void testLoadUseCase(){
 
 class ChnCustom: public Chn{
 public:
-	void compute(){
+	void compute(cv::Mat& image){
 		OUT("Custom compute");
 	}
 };

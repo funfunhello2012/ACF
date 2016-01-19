@@ -248,26 +248,18 @@ void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,cv::Mat image){
 	Pyramid* pyramid = this->getPyramid();
 	vector<vector<Mat*> > datas;
 	pyramid->computeData(image,datas);
-//	vector<Mat> oneScale;
-//	datas.push_back(oneScale);
-//	datas.push_back(oneScale);
-//	for(int i=0;i<datas.size();i++){//detect all scales
-//		vector<BoundingBox> currentScalesRes;
-//		int nChns;
-//		int rows = datas[i][0].rows;
-//		int cols = datas[i][0].cols;
-//		float chns[nChns*rows*cols];
-//		for(int cIdx = 0;cIdx<nChns;cIdx++){
-//			int chnOff = i*rows*cols;
-//			for(int c=0;c<cols;c++){
-//				int colOff = c*rows;
-//				for(int r=0;r<rows;r++){
-//					chns[chnOff+colOff+r] = datas[i][cIdx].at<float>(r,c);
-//				}
-//			}
-//		}
-//		detectOneScale(currentScalesRes,chns,rows,cols,nChns);
-//	}
+	OUT_V(datas.size());
+	for(int i=0;i<datas.size();i++){
+		OUT("Detect one scale");
+		vector<BoundingBox> currentScales;
+		vector<Mat*> currentData = datas[i];
+		float* chnsInOne = (float*)currentData[0]->data; // copy the scale data into a float*
+
+		for(int j=0;j<currentData.size();j++){//free the memory here
+			delete currentData[j];
+		}
+//		detectOneScale(currentScales,)
+	}
 }
 
 

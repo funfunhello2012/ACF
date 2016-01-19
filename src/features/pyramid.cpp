@@ -134,8 +134,17 @@ void approxcompute(Mat &mat,float ratio)
 	}
 }
 
-void Pyramid:: computeData(Mat image,vector<vector <Mat*>>& data){
+void Pyramid:: computeData(Mat& image,vector<vector <Mat*>>& data){
 	OUT("Pyramid::computeData");
+	vector<Mat*> chnsData;
+	this->chnsmanager->compute(chnsData,image);
+	OUT("Getting data from ChnsManager");
+	data.push_back(chnsData);
+
+//	vector<Mat*> scale1 = chnsData;
+//	data.push_back(scale1);
+//	vector<Mat*> scale2 = chnsData;
+//	data.push_back(scale2);
 
 //	int shrink=4;
 //	float *scales;

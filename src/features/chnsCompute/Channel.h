@@ -19,10 +19,10 @@ public:
 //	Chn(Mat img): enabled(true), pad(0), padType(NONE){
 //		img.copyTo(this -> img);
 //	}
-	virtual void compute() = 0;
+	virtual void compute(cv::Mat& image) = 0;
 	virtual  ~Chn() {}
-	Mat* data(){
-		return img;
+	cv::Mat* data(){
+		return chnData;
 	}
 private:
 
@@ -36,7 +36,7 @@ protected:
 	int		pad;	 // pad value
 	typedef enum{NONE,REPLICATE,SYMMETRIC,CIRCULAR} padType_e;
 	padType_e padType;
-	Mat* img; // 输入时拷贝到类内部，在内部进行处理  // 需要修改为引用外部，该类只负责提供计算方法
+	cv::Mat* chnData; // 输入时拷贝到类内部，在内部进行处理  // 需要修改为引用外部，该类只负责提供计算方法
 };
 
 class ColorChn : public Chn { // 颜色通道，三个分量
@@ -57,7 +57,7 @@ public:
 //			strcpy(name,  "color channels");
 //			padType = REPLICATE;
 //	}
-	void compute();
+	void compute(cv::Mat& image);
 private:
 	int colorSpace;
 	int smooth;
@@ -90,7 +90,7 @@ public:
 //			padType = REPLICATE;
 //	}
 
-	void compute();
+	void compute(cv::Mat& image);
 private: // settings
 	int binSize;
 	unsigned int nOrients;
@@ -129,7 +129,7 @@ public:
 		Chn(),colorChnUsed(colorUsed),normRad(normR),normConst(normC),full(f){
 			strcpy(name,  "gradient magnitude");
 	}
-	void compute();
+	void compute(cv::Mat& image);
 private:
 	bool colorChnUsed;
 	int normRad;

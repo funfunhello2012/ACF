@@ -10,8 +10,9 @@ using namespace std;
 //extern void cvtColor2(Mat &II, Mat &JJ, int code);
 //#endif
 
-void ColorChn::compute(void){
+void ColorChn::compute(cv::Mat& image){
 	OUT("ColorChn::compute");
+	this->chnData = new Mat(image);
 }
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// % compute color channels
@@ -85,14 +86,20 @@ void ColorChn::compute(void){
 //	//  is not available now.
 //}
 
-void GradHistChn::compute(void){
+void GradHistChn::compute(cv::Mat& image){
 	OUT("GradHistChn::compute");
+	this->chnData = new Mat(image);
 }
 
-void MagChn::compute(void){
+void MagChn::compute(cv::Mat& image){
 	OUT("MagChn::compute");
+	this->chnData = new Mat(image);
 }
 
 void ChnsManager::compute(std::vector<Mat*>& chnDatas,Mat image){
 	OUT("ChnsManager::compute");
+	for(int i=0;i<chns.size();i++){
+		chns[i]->compute(image);
+		chnDatas.push_back(chns[i]->data());
+	}
 }
