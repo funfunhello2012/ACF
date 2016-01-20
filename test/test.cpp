@@ -25,12 +25,13 @@ void testLoadUseCase(){
 	detector.detectImg(bbs,image);
 }
 
-class ChnCustom: public Chn{
-public:
-	void compute(cv::Mat& image){
-		OUT("Custom compute");
-	}
-};
+//class ChnCustom: public Chn{
+//public:
+//	void compute(float * const image,const cv::Vec3i dims){
+//		OUT("Custom compute");
+//	}
+//};
+
 //use case 2 :
 void testTrainTestUseCase(){
 	ACFDetector::Builder* builder = new ACFDetector::Builder("detectorName","posDir","gtDir");
@@ -38,8 +39,8 @@ void testTrainTestUseCase(){
 	Mat img;
 	ChnsManager* chnsManager = detector.getChnsManager();
 	Pyramid* pyramid = detector.getPyramid();
-	Chn* chn  = new ChnCustom();
-	chnsManager->addChn(chn);
+//	Chn* chn  = new ChnCustom();
+//	chnsManager->addChn(chn);
 	vector<vector<Mat> > datas;
 //	pyramid->computeData(img,datas);
 	detector.train();

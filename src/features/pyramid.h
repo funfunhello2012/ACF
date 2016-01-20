@@ -26,7 +26,7 @@ public:
 		Pyramid(NULL);
 	}
 	~Pyramid(){}
-	void computeData(Mat& image,vector<vector <Mat*> >& data);
+	void computeData(Mat& image,vector<vector <float*> >& data,vector<Size>& scaleSize);
 	//get methods
 	ChnsManager* getChnsManager()
 	{

@@ -134,10 +134,12 @@ void approxcompute(Mat &mat,float ratio)
 	}
 }
 
-void Pyramid:: computeData(Mat& image,vector<vector <Mat*>>& data){
+void Pyramid:: computeData(Mat& image,vector<vector <float*>>& data, vector<Size>& scaleSize){
 	OUT("Pyramid::computeData");
-	vector<Mat*> chnsData;
-	this->chnsmanager->compute(chnsData,image);
+	vector<float*> chnsData;
+	float* imageData = (float*)image.data;	//先旋转,在取出每个通道,
+	Vec3i imgDims = Vec3i(image.rows,image.cols,image.channels());
+	this->chnsmanager->compute(chnsData,imageData,imgDims);
 	OUT("Getting data from ChnsManager");
 	data.push_back(chnsData);
 

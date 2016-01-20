@@ -246,14 +246,15 @@ void ACFDetector::detectOneScale(std::vector<BoundingBox>& bbs,float* chns,int r
 void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,cv::Mat image){
 	OUT("detect image");
 	Pyramid* pyramid = this->getPyramid();
-	vector<vector<Mat*> > datas;
-	pyramid->computeData(image,datas);
+	vector<vector<float*> > datas;
+	vector<Size> scaleSizes;
+	pyramid->computeData(image,datas,scaleSizes);
 	OUT_V(datas.size());
 	for(int i=0;i<datas.size();i++){
 		OUT("Detect one scale");
 		vector<BoundingBox> currentScales;
-		vector<Mat*> currentData = datas[i];
-		float* chnsInOne = (float*)currentData[0]->data; // copy the scale data into a float*
+		vector<float*> currentData = datas[i];
+		float* chnsInOne = (float*)currentData[0]; // copy the scale data into a float*
 
 		for(int j=0;j<currentData.size();j++){//free the memory here
 			delete currentData[j];
