@@ -1,6 +1,7 @@
 #include "pyramid.h"
 #include <iostream>
 using namespace std;
+using namespace cv;
 
 //function in getScales
 int getminmax(float a[],float b[])
@@ -137,6 +138,7 @@ void approxcompute(Mat &mat,float ratio)
 void Pyramid:: computeData(Mat& image,vector<vector <float*>>& data, vector<Size>& scaleSize){
 	OUT("Pyramid::computeData");
 	vector<float*> chnsData;
+	OUT(image);
 	float* imageData = (float*)image.data;	//先旋转,在取出每个通道,
 	Vec3i imgDims = Vec3i(image.rows,image.cols,image.channels());
 	this->chnsmanager->compute(chnsData,imageData,imgDims);
