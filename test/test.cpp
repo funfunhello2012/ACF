@@ -21,7 +21,8 @@ void testLoadUseCase(){
 //	ACFDetector detector  =  loadDetectorFromJson("");
 	vector<BoundingBox> bbs;
 //	Mat image = imread("./data/I00000.png");
-	Mat image(5,3,CV_32FC3);
+//	Mat image(5,3,CV_32FC3);
+	Mat image(360,480,CV_32FC3);
 	detector.detectImg(bbs,image);
 }
 

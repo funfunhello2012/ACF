@@ -1,8 +1,9 @@
 #pragma once
 
+#include "chnsCompute/mex/imResampleMex.hpp"
+
 #include "../Util/common.h"
-
-
+#include "../Util/Util.h"
 #include "chnsCompute/Channel.h"
 
 class Pyramid{
@@ -26,7 +27,7 @@ public:
 		Pyramid(NULL);
 	}
 	~Pyramid(){}
-	void computeData(cv::Mat& image,std::vector<std::vector <float*> >& data,std::vector<cv::Size>& scaleSize);
+	void computeData(cv::Mat& image,std::vector<std::vector <float*> >& data, std::vector<std::vector<cv::Vec3i> >& dataSizes);
 	//get methods
 	ChnsManager* getChnsManager()
 	{

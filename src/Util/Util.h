@@ -23,6 +23,9 @@ public:
 	~BoundingBox(){};
 };
 
+float * matconvert(cv::Mat image);
+
+cv::Mat convertmat(float *ima,cv::Size sz,int nch);
 
 
 #endif /* SRC_UTIL_UTIL_H_ */

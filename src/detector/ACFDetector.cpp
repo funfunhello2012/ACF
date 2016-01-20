@@ -247,17 +247,19 @@ void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,cv::Mat image){
 	OUT("detect image");
 	Pyramid* pyramid = this->getPyramid();
 	vector<vector<float*> > datas;
-	vector<Size> scaleSizes;
+	vector<vector<cv::Vec3i>> scaleSizes;
 	pyramid->computeData(image,datas,scaleSizes);
 	OUT_V(datas.size());
 	for(int i=0;i<datas.size();i++){
 		OUT("Detect one scale");
 		vector<BoundingBox> currentScales;
 		vector<float*> currentData = datas[i];
+		vector<cv::Vec3i> currentChn = scaleSizes[i];
 		float* chnsInOne = (float*)currentData[0]; // copy the scale data into a float*
 
 		for(int j=0;j<currentData.size();j++){//free the memory here
-			delete currentData[j];
+			OUT_V(currentChn[j]);
+			delete[] currentData[j]; //change the malloc to new
 		}
 //		detectOneScale(currentScales,)
 	}

@@ -15,11 +15,15 @@ public:
 		shrink = s;
 	}
 
-	Chn(): enabled(true), shrink(2), pad(0), padType(NONE){}
+	/**
+	 *	@param numChn : the number of channel image for this channel
+	 */
+	Chn(int numChn): enabled(true), shrink(2), pad(0), numChns(numChn), padType(NONE){}
 //	Chn(Mat img): enabled(true), pad(0), padType(NONE){
 //		img.copyTo(this -> img);
 //	}
 	virtual void compute(float * const image,const cv::Vec3i dims) = 0;
+	virtual int getChnNum()=0;
 	virtual  ~Chn() {}
 	float* data(){
 		return chnData;
@@ -34,6 +38,7 @@ protected:
 	int shrink;
 	// padWith
 	int		pad;	 // pad value
+	int numChns;
 	typedef enum{NONE,REPLICATE,SYMMETRIC,CIRCULAR} padType_e;
 	padType_e padType;
 	float* chnData; // 输入时拷贝到类内部，在内部进行处理  // 需要修改为引用外部，该类只负责提供计算方法
@@ -42,7 +47,7 @@ protected:
 class ColorChn : public Chn { // 颜色通道，三个分量
 public:
 	ColorChn(int colorSpace = CV_BGR2Luv, int smooth = 1) :
-		Chn(), colorSpace(colorSpace), smooth(smooth){
+		Chn(3), colorSpace(colorSpace), smooth(smooth){
 			strcpy(name,  "color channels");
 			padType = REPLICATE;
 	}
@@ -58,6 +63,7 @@ public:
 //			padType = REPLICATE;
 //	}
 	void compute(float * const image,const cv::Vec3i dims);
+	int getChnNum(){return numChns;}
 private:
 	int colorSpace;
 	int smooth;
@@ -67,7 +73,7 @@ private:
 class GradHistChn : public Chn { // 颜色通道，三个分量
 public:
 	GradHistChn(int _nOrients = 6) :
-		binSize(8), nOrients(_nOrients),softBin(0), clipHog(.2),useHog(false){
+		Chn(nOrients), binSize(8), nOrients(_nOrients),softBin(0), clipHog(.2),useHog(false){
 			strcpy(name,  "Gradient Histogram Channels");
 			padType = REPLICATE;
 	}
@@ -81,7 +87,7 @@ public:
 	// %     .clipHog      - [.2] value at which to clip hog histogram bins
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	GradHistChn(int binS,int nO,bool softB,bool useH,double cH) :
-		Chn(),binSize(binS),nOrients(nO),softBin(softB),clipHog(cH),useHog(useH){
+		Chn(nO), binSize(binS),nOrients(nO),softBin(softB),clipHog(cH),useHog(useH){
 			strcpy(name,  "gradient histogram");
 	}
 //	GradHistChn(Mat img, int _nOrients = 6) :
@@ -91,6 +97,7 @@ public:
 //	}
 
 	void compute(float * const image,const cv::Vec3i dims);
+	int getChnNum(){return numChns;}
 private: // settings
 	int binSize;
 	unsigned int nOrients;
@@ -102,7 +109,7 @@ private: // settings
 class ChnsManager{
 private:
 	std::vector<Chn*> chns;
-
+	std::vector<cv::Vec3i> chnSize;
 public:
 	ChnsManager(){};
 	void addChn(Chn* ch){
@@ -110,7 +117,16 @@ public:
 		chns.push_back(ch);
 	}
 
+	int getNTypes(){
+		return chns.size();
+	}
 
+	/**
+	 * return the chnType sizes
+	 */
+	std::vector<cv::Vec3i> getChnSize(){
+		return chnSize;
+	}
 
 	void compute(std::vector<float*>& chnDatas,float* image,const cv::Vec3i dims);
 };
@@ -126,10 +142,11 @@ public:
 	//	%     .full         - [0] if true compute angles in [0,2*pi) else in [0,pi)
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	MagChn(bool colorUsed,int normR,double normC,bool f) :
-		Chn(),colorChnUsed(colorUsed),normRad(normR),normConst(normC),full(f){
+		Chn(1), colorChnUsed(colorUsed),normRad(normR),normConst(normC),full(f){
 			strcpy(name,  "gradient magnitude");
 	}
 	void compute(float * const image,const cv::Vec3i dims);
+	int getChnNum(){return numChns;}
 private:
 	bool colorChnUsed;
 	int normRad;
