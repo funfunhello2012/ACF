@@ -129,6 +129,7 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 //	OUT("Getting data from ChnsManager");
 //	data.push_back(chnsData);
 
+	image = image.t(); // for using the matlab mex
 	int shrink=4;
 	float *scales;
 	int nScales;
@@ -145,7 +146,6 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 	*/
 
 	// convert image to LUV
-	image.t();
 	float* imgData = matconvert( image);
 
 	OUT_V(nPerOct);

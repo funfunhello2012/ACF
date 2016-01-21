@@ -9,6 +9,9 @@
 
 using namespace cv;
 
+/**
+ * convert the OpenCV mat to float pointer to matlab
+ */
 float * matconvert(Mat image)
 {
 
@@ -24,7 +27,9 @@ float * matconvert(Mat image)
 	}
 	float *A1 = (float*)malloc(m*sizeof(float));
 	int idx = 0;
-	for(int ch=0; ch<image.channels(); ch++){
+
+	//here OpenCV store data as BGR and matlab store as RGB
+	for(int ch=image.channels()-1; ch>=0; ch--){
 		for(int r=0;r<m;){
 				A1[idx++]=(float)A[r+ch];
 				r = r+3;
@@ -33,6 +38,9 @@ float * matconvert(Mat image)
 	return A1;
 }
 
+/**
+ * convert the pointer to matlab data  OpenCV mat
+ */
 Mat convertmat(float *ima,Size sz,int nch)
 {
 	int m=sz.height*sz.width*nch;
@@ -40,9 +48,9 @@ Mat convertmat(float *ima,Size sz,int nch)
 	int off =sz.height*sz.width;
 	int idx = 0;
 	for(int i=0;i<off;i++){
-			B[idx++]=(uchar)(ima[i]+0.5);
+			B[idx++]=(uchar)(ima[i+2*off]+0.5);
 			B[idx++] = (uchar)(ima[i+off]+0.5);
-			B[idx++] = (uchar)(ima[i+2*off]+0.5);
+			B[idx++] = (uchar)(ima[i]+0.5);
 	}
 	return Mat(sz.height, sz.width, CV_8UC(nch),B);
 }
