@@ -10,10 +10,13 @@
 
 #include "common.h"
 
-//enum COLORSPACE{
-//	YUV,RGB,HSV,GRAY
-//};
-
+/**
+ * Bounding box hold the value of detect bounding box (x,y,width,height,score)
+ * (x,y) : the coordinate for the bounding box left top point
+ * width : bounding box width
+ * height : bounding box height
+ * score : confidence value how a bounding box is a specific object
+ */
 class BoundingBox{
 private:
 	cv::Rect_<float> box;
@@ -23,8 +26,20 @@ public:
 	~BoundingBox(){};
 };
 
+/**
+ * convert a OpenCV Mat data to a column first order array,this is needed for calling function in mex file
+ * @param image : OpenCV Mat
+ * @return : float pointer to the Mat data with column first order
+ */
 float * matconvert(cv::Mat image);
 
+/**
+ * convert column first order array data to a OpenCV Mat object
+ * @param ima : the image data
+ * @param sz : the image size
+ * @param nch : number channel of the image data
+ * @return : a OpenCV object hold the data
+ */
 cv::Mat convertmat(float *ima,cv::Size sz,int nch);
 
 

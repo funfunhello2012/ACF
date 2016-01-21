@@ -48,7 +48,9 @@ ACFDetector::	~ACFDetector(){
 	OUT("~ACFDetector()");
 }
 
-//ACFDetector::Builder::Builder(const string configFile){ cout << "Builder(config) from " << configFile << endl;}
+/**
+ * Detector is init with its' builder
+ */
 ACFDetector::Builder::Builder(const string name,const string posDir,const string gtDir){
 	OUT("Builder(string,string,string)");
 	this->_name = name;
@@ -148,7 +150,12 @@ inline void getChild( float *chns1, uint32 *cids, uint32 *fids,
 }
 
 /**
- *
+ * detect one scale boundbox
+ * @param chns : all channel feature were hold in one array chns and were stored in column first order like [R...RG...GB...BM...MG1...G1...]
+ * @param bbs :  return the bounding box detected in current scale
+ * @param rows :  height of one channel feature
+ * @param cols : width of one channel feature
+ * @param nC : total number of channel feature map in chns
  */
 void ACFDetector::detectOneScale(std::vector<BoundingBox>& bbs,float* chns,int rows,int cols,int nC){
 	OUT("Detect One Scale");

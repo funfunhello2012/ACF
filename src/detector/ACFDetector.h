@@ -19,6 +19,9 @@ typedef unsigned int uint32;
 
 namespace acf{
 
+/**
+ * This Classifier Model hold the data for the classifier
+ */
 struct ClassifierModel{
 	float* thrs;
 	float* hs;
@@ -31,6 +34,16 @@ struct ClassifierModel{
 
 typedef struct ClassifierModel Clf;
 
+/**************************************************
+ * ACFDetector is the detector object to used
+ * we can use it in two case:
+ * 1.load an detector from a file then detect a image
+ * 	ACFDetector detector  =  loadDetectorFromMat("/home/edison/workspace/acfImplement/ACF/data/AcfInriaDetector.mat");
+ * 	vector<BoundingBox> bbs;
+ * 	Mat image = imread("./data/I00000.png");
+ * 	detector.detectImg(bbs,image);
+ * 2.train a detector and test it on a dataset
+ */
 class ACFDetector {
 public:
 	~ACFDetector();
@@ -80,6 +93,11 @@ public:
 	friend std::ostream& operator<<(std::ostream&os ,const ACFDetector& d);
 	void train();
 	void test();
+	/*********************************************************
+	 * detect image and get the BoundBox in this image
+	 * @param bbs : it is a set of bounding box that hold the (x,y,width,height,score) values
+	 * @param image : a cv::Mat image data
+	 */
 	void detectImg(std::vector<BoundingBox>& bbs,cv::Mat image);
 	Pyramid* getPyramid(){
 		return this->_pyramid;
@@ -107,6 +125,9 @@ private:
 	Builder* _builder;
 	ACFDetector(Builder* builder);
 	ACFDetector& operator=(const ACFDetector&);//prevent the compiler to generate copying assignment
+	/**
+	 * detect one scale image
+	 */
 	void detectOneScale(std::vector<BoundingBox>& bbs,float* chns,int rows,int cols,int nC);
 };
 

@@ -4,7 +4,11 @@
 
 #include "../../Util/common.h"
 
-// abstract base class
+/**
+ * abstract base class
+ * You can extended Chn and re-implement the virtual compute method
+ * then the feature in you defined can be used in ACF detect framework
+ */
 class Chn {
 public:
 	void setEnabled(bool e){
@@ -19,9 +23,11 @@ public:
 	 *	@param numChn : the number of channel image for this channel
 	 */
 	Chn(int numChn): enabled(true), shrink(2), pad(0), numChns(numChn), padType(NONE){}
-//	Chn(Mat img): enabled(true), pad(0), padType(NONE){
-//		img.copyTo(this -> img);
-//	}
+
+	/**
+	 * @param image : pointer to the image data in column first order
+	 * @param dims : a Vec3i hold the image (height,width,channels)
+	 */
 	virtual void compute(float * const image,const cv::Vec3i dims) = 0;
 	virtual int getChnNum()=0;
 	virtual  ~Chn() {}
