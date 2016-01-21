@@ -130,7 +130,8 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 //	data.push_back(chnsData);
 
 	image = image.t(); // for using the matlab mex
-	int shrink=4;
+	int shrink=this->chnsmanager->getShrink();
+	OUT_V(shrink);
 	float *scales;
 	int nScales;
 	Size size;
@@ -232,26 +233,19 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 			is.push_back(istmp[2]);
 		}
 		assert(is.size()>=2);
-		OUT("pyramid.cpp::229");
-		OUT_V(is[0]-1);OUT_V(is[1]-1);
-		OUT("pyramid.cpp::231");
+
 
 		vector<float*> d0=data[is[0]-1];
 		vector<float*> dd0=data[is[1]-1];
-		OUT("pyramid.cpp::232");
+
 		float *matsum1=(float*)malloc(ntypes*sizeof(float));
 		float *matsum2=(float*)malloc(ntypes*sizeof(float));
-		OUT("pyramid.cpp::234");
+
 		//lambdas=(float*)malloc(ntypes*sizeof(float));
 		for(int i=0;i<ntypes;i++)
 		{
-			OUT("pyramid.cpp::244");
-
 			matsum1[i]=getmat_sum(d0[i],dataSizes[is[0]-1][i]);
-
-			OUT("pyramid.cpp::246");
 			matsum2[i]=getmat_sum(dd0[i],dataSizes[is[1]-1][i]);
-			OUT("pyramid.cpp::246");
 			lambdas[i]=(float)(-log10((double)(matsum1[i]/matsum2[i]))/log10((double)2))/(log10((double)(scales[is[0]-1]/scales[is[1]-1])/log10((double)2)));
 		}
 	}

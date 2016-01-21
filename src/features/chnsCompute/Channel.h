@@ -19,14 +19,14 @@ public:
 		enabled = e;
 	}
 
-	void setShrink(int s){
-		shrink = s;
+	bool isEnabled(){
+		return enabled;
 	}
 
 	/**
 	 *	@param numChn : the number of channel image for this channel
 	 */
-	Chn(int numChn): enabled(true), shrink(2), pad(0), numChns(numChn), padType(NONE){}
+	Chn(int numChn): enabled(true), pad(0), numChns(numChn), padType(NONE){}
 
 	/**
 	 * @param image : pointer to the image data in column first order
@@ -34,6 +34,7 @@ public:
 	 */
 	virtual void compute(float * const image,const cv::Vec3i dims) = 0;
 	virtual int getChnNum()=0;
+	virtual cv::Vec3i getChnDims()=0;
 	virtual  ~Chn() {}
 	float* data(){
 		return chnData;
@@ -45,13 +46,13 @@ protected:
 	bool 	enabled;
 	char	name[20]; // 注意，通道名称不能超过20个字符
 	
-	int shrink;
-	// padWith
+//	int shrink;
 	int		pad;	 // pad value
 	int numChns;
 	typedef enum{NONE,REPLICATE,SYMMETRIC,CIRCULAR} padType_e;
 	padType_e padType;
 	float* chnData; // 输入时拷贝到类内部，在内部进行处理  // 需要修改为引用外部，该类只负责提供计算方法
+	cv::Vec3i dims;
 };
 
 class ColorChn : public Chn { // 颜色通道，三个分量
@@ -74,6 +75,7 @@ public:
 //	}
 	void compute(float * const image,const cv::Vec3i dims);
 	int getChnNum(){return numChns;}
+	cv::Vec3i getChnDims(){return dims;}
 private:
 	int colorSpace;
 	int smooth;
@@ -108,6 +110,7 @@ public:
 
 	void compute(float * const image,const cv::Vec3i dims);
 	int getChnNum(){return numChns;}
+	cv::Vec3i getChnDims(){return dims;}
 private: // settings
 	int binSize;
 	unsigned int nOrients;
@@ -118,6 +121,7 @@ private: // settings
 
 class ChnsManager{
 private:
+	int shrink;
 	std::vector<Chn*> chns;
 	std::vector<cv::Vec3i> chnSize;
 public:
@@ -136,6 +140,14 @@ public:
 	 */
 	std::vector<cv::Vec3i> getChnSize(){
 		return chnSize;
+	}
+
+	void setShrink(int s){
+		this->shrink = s;
+	}
+
+	int getShrink(){
+		return this->shrink;
 	}
 
 	void compute(std::vector<float*>& chnDatas,float* image,const cv::Vec3i dims);
@@ -157,6 +169,7 @@ public:
 	}
 	void compute(float * const image,const cv::Vec3i dims);
 	int getChnNum(){return numChns;}
+	cv::Vec3i getChnDims(){return dims;}
 private:
 	bool colorChnUsed;
 	int normRad;

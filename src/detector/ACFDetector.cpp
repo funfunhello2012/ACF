@@ -31,6 +31,7 @@ ACFDetector::ACFDetector(ACFDetector::Builder* builder) {
 	this->_shrink = builder->_shrink;
 	this->_cascThr = builder->_cascThr;
 	this->_chnsManager = builder->_chnsManager;
+	this->_chnsManager->setShrink(this->_shrink);
 	this->_clf = builder->_clf;
 	this->_pyramid = builder->_pyramid;
 }
