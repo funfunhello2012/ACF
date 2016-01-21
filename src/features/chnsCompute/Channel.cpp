@@ -1,11 +1,4 @@
-﻿
-
-
-#include "mex/rgbConvertMex.hpp"
-#include "mex/gradientMex.hpp"
-#include "mex/wrappers.hpp"
-
-#include "Channel.h"
+﻿#include "Channel.h"
 
 using namespace cv;
 using namespace std;

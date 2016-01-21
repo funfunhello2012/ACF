@@ -4,6 +4,10 @@
 
 #include "../../Util/common.h"
 
+#include "mex/rgbConvertMex.hpp"
+#include "mex/gradientMex.hpp"
+#include "mex/wrappers.hpp"
+
 /**
  * abstract base class
  * You can extended Chn and re-implement the virtual compute method
