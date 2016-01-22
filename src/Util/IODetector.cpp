@@ -66,14 +66,14 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 			double *modelDs = (double *) opts_modelDs->data;
 			OUT_V(modelDs[0]);
 			OUT_V(modelDs[1]);
-			builder->modelDs(Size(modelDs[0],modelDs[1]));
+			builder->modelDs(Size(modelDs[1],modelDs[0]));
 
 			//opts.modelDsPad
 			matvar_t* opts_modelDsPad = Mat_VarGetStructFieldByName(opts,"modelDsPad",0);
 			double *modelDsPad = (double *) opts_modelDsPad->data;
 			OUT_V(modelDsPad[0]);
 			OUT_V(modelDsPad[1]);
-			builder->modelDsPad(Size(modelDsPad[0],modelDsPad[1]));
+			builder->modelDsPad(Size(modelDsPad[1],modelDsPad[0]));
 
 			//opts.stride
 			matvar_t* opts_stride = Mat_VarGetStructFieldByName(opts,"stride",0);
@@ -198,7 +198,7 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 				OUT("opts.pPyramid.pad");
 				OUT(*pad);
 				OUT(*(pad+1));
-				pyramid->setpad(Size(*pad,*(pad+1)));
+				pyramid->setpad(Size(*(pad+1),*pad));
 
 				//opts.pPyramid.minDs
 				matvar_t* opts_pPyramid_minDs =  Mat_VarGetStructFieldByName(opts_pPyramid,"minDs",0);
@@ -206,7 +206,7 @@ ACFDetector acf::loadDetectorFromMat(const string matPath){
 				OUT("opts.pPyramid.minDs");
 				OUT(*minDs);
 				OUT(*(minDs+1));
-				pyramid->setminDs(Size(*minDs,*(minDs+1)));
+				pyramid->setminDs(Size(*(minDs+1),*minDs));
 
 				//opts.pPyramid.smooth
 				matvar_t* opts_pPyramid_smooth =  Mat_VarGetStructFieldByName(opts_pPyramid,"smooth",0);

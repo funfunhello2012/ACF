@@ -34,9 +34,7 @@ void getScales(float *&scaless,int &nScales,int nPerOct,int nOctUp,Size minDs,in
 	if(sz.width==0&&sz.height==0)
 		return ;
 	int tmp=(sz.width/minDs.width)<(sz.height/minDs.height)?(sz.width/minDs.width):(sz.height/minDs.height);
-	OUT_V(tmp);
 	nScales=(int)floor(nPerOct*(nOctUp+log10((double)tmp)/log10((double)2))+1);
-	OUT_V(nScales);
 	scales=(float *)malloc(nScales*sizeof(float));
 	for(int i=0;i<nScales;i++)
 	{
@@ -130,6 +128,9 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 //	data.push_back(chnsData);
 
 	image = image.t(); // for using the matlab mex
+	minDs = Size(minDs.height,minDs.width);
+	pad = Size(pad.height,pad.width);
+
 	int shrink=this->chnsmanager->getShrink();
 	OUT_V(shrink);
 	float *scales;
@@ -152,11 +153,13 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 	OUT_V(nPerOct);
 	OUT_V(nOctUp);
 	OUT_V(minDs);
+	OUT_V(minDs.width);
+	OUT_V(pad);
 	OUT_V(size);
 
 	// get scales at which to compute features and list of real/approx scales
 	getScales(scales,nScales,nPerOct, nOctUp,minDs,4,size);
-	OUT("pyramid::159");
+	OUT_V(nScales);
 	data=vector<vector <float*>>(nScales,vector<float*>(ntypes));
 	dataSizes = vector<vector<Vec3i> >(nScales,vector<Vec3i>(ntypes));
 
@@ -255,9 +258,11 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 	{
 		int iR=isN[isA[i]-1];
 		float s=scales[isA[i]-1];
-		Size sz1((int)((size.width*s/shrink)*shrink+0.5),(int)((size.height*s/shrink)*shrink+0.5));
+		Size sz1((int)((size.width*s/shrink)*shrink+0.5)/shrink,(int)((size.height*s/shrink)*shrink+0.5)/shrink);
+
 		vector<float*> m1=data[iR-1];
 		vector<float*> approx;
+		vector<Vec3i> approxSize;
 		for(int j=0;j<ntypes;j++)
 		{
 			int ha=dataSizes[iR-1][j][0];
@@ -267,8 +272,10 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 			float* m11=new float[sz1.height*sz1.width*nchannel ];//
 			resample(m1[j],m11,ha,sz1.height,wa,sz1.width,nchannel,(float)ratio);
 			approx.push_back(m11);
+			approxSize.push_back(Vec3i(sz1.height,sz1.width,nchannel));
 		}
 		data[isA[i]-1]=approx;
+		dataSizes[isA[i]-1] =approxSize;
 	}
 	OUT("pyramid.cpp::261");
 
