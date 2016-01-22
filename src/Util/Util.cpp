@@ -47,10 +47,19 @@ Mat convertmat(float *ima,Size sz,int nch)
 	uchar *B=(uchar*)malloc(m*sizeof(uchar));
 	int off =sz.height*sz.width;
 	int idx = 0;
-	for(int i=0;i<off;i++){
-			B[idx++]=(uchar)(ima[i+2*off]+0.5);
-			B[idx++] = (uchar)(ima[i+off]+0.5);
-			B[idx++] = (uchar)(ima[i]+0.5);
+	switch(nch){
+	case 1:
+		for(int i=0;i<off;i++)
+				B[idx++] = (uchar)(ima[i]+0.5);
+		break;
+	case 3:
+		for(int i=0;i<off;i++){
+				B[idx++]=(uchar)(ima[i+2*off]+0.5);
+				B[idx++] = (uchar)(ima[i+off]+0.5);
+				B[idx++] = (uchar)(ima[i]+0.5);
+		}
+		break;
 	}
+
 	return Mat(sz.height, sz.width, CV_8UC(nch),B);
 }

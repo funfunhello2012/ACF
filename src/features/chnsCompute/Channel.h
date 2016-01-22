@@ -4,6 +4,7 @@
 
 #include "../../Util/common.h"
 
+#include "mex/convConst.hpp"
 #include "mex/rgbConvertMex.hpp"
 #include "mex/gradientMex.hpp"
 #include "mex/wrappers.hpp"

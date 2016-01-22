@@ -8,50 +8,67 @@ using namespace std;
 void ColorChn::compute(float * const image,const cv::Vec3i dims){
 	OUT("ColorChn::compute");
 //	float* data = rgbConvert(image, dims[0]*dims[1],dims[2],0,1.0f); ;
-	float* data = new float[dims[0]*dims[1]*dims[2]];
-	for(int i=0;i<dims[0]*dims[1]*dims[2];i++){
-		data[i] = i;
-	}
+//	float* data = new float[dims[0]*dims[1]*dims[2]];
+//	for(int i=0;i<dims[0]*dims[1]*dims[2];i++){
+//		data[i] = i;
+//	}
+	float* data = rgbConvert(image, dims[0]*dims[1], dims[2],2, 1.0f/255) ;
 	this->chnData = data;
 	this->dims = Vec3i(dims[0],dims[1],dims[2]);
 }
 
 void GradHistChn::compute(float * const image,const cv::Vec3i dims){
 	OUT("GradHistChn::compute");
-//	int nCh = dims[2];
-//	int h2 = dims[0]/this->binSize;
-//	int w2 = dims[1]/this->binSize;
-//	float* M =  new float[dims[0]*dims[1]*nCh];
-//	float* O =  new float[dims[0]*dims[1]*nCh];
-//	float* H = new float[h2*w2*nCh*6];
-//	gradHist(M,O,H,dims[0],dims[1],this->binSize,this->nOrients,0,1);
-
-	float* H = new float[dims[0]/binSize*dims[1]/binSize*nOrients];
-	for(int i=0;i<dims[0]/binSize*dims[1]/binSize*nOrients;i++){
-		H[i] = i;
+	Size sz = Size(dims[1],dims[0]);
+	float*M = new float[sz.height*sz.width];
+	float* O = new float[sz.height*sz.width];
+	int normRad = 5;
+	float normConst=.005;
+	bool full = 0;
+//	float* luvImg = rgbConvert(originImg, sz.height*sz.width, nCh,2, 1.0f/255) ;
+	gradMag(image,M, O,sz.height,sz.width,3,false);
+	float* convRes = new float[sz.height*sz.width*1];
+	convTri( M, convRes, sz.height, sz.width,1,normRad, 1 );
+	gradMagNorm(M,convRes,sz.height,sz.width,normConst);
+	int hb,wb,nChns;
+	hb = sz.height/binSize;
+	wb = sz.width/binSize;
+	nChns = useHog== 0 ? nOrients : (useHog==1 ? nOrients*4 : nOrients*3+5);
+	float* H = new float[hb*wb*nChns];
+	if( useHog==0 ) {
+		gradHist( M, O, H, sz.height, sz.width, binSize, nOrients, softBin, full );
+	} else if(useHog==1) {
+		hog( M, O, H,  sz.height, sz.width, binSize, nOrients, softBin, full, clipHog );
+	} else {
+		fhog( M, O, H,  sz.height, sz.width, binSize, nOrients, softBin, clipHog );
 	}
+
 	this->chnData = H;
-	this->dims = Vec3i(dims[0]/binSize,dims[1]/binSize,nOrients);
+	this->dims = Vec3i(hb,wb,nChns);
 //	delete[] O;
 //	delete[] M;
 }
 
 void MagChn::compute(float * const image,const cv::Vec3i dims){
 	OUT("MagChn::compute");
-//	int h = dims[0];
-//	int w = dims[1];
-//	int nCh = dims[2];
-//	float* M =  new float[w*h*nCh];
-//	float* O =  new float[h*w*nCh];
-//	gradMag(image, M, O, h, w, nCh,1 );
-//	delete[] O;
+
+//	float* luvImg = rgbConvert(originImg, sz.height*sz.width, nCh,2, 1.0f/255) ;
+//	gradMag(luvImg,M, O,sz.height,sz.width,3,false);
+//	float* convRes = new float[sz.height*sz.width*1];
+//	convTri( M, convRes, sz.height, sz.width,1,normRad, 1 );
+//	gradMagNorm(M,convRes,sz.height,sz.width,normConst);
 
 	float* M = new float[dims[0]*dims[1]];
-	for(int i=0;i<dims[0]*dims[1];i++){
-		M[i] = i;
-	}
+	float* O=0;
+	Size sz = Size(dims[1],dims[0]);
+//	float* luvImg = rgbConvert(image, sz.height*sz.width, dims[2],2, 1.0f/255) ;	//mind
+	gradMag(image,M, O,sz.height,sz.width,3,false);
+	float* convRes = new float[sz.height*sz.width*1];
+	convTri( M, convRes, sz.height, sz.width,1,normRad, 1 );
+	gradMagNorm(M,convRes,sz.height,sz.width,normConst);
 	this->chnData = M;
 	this->dims = Vec3i(dims[0],dims[1],1);
+	delete convRes;
 }
 
 void ChnsManager::compute(std::vector<float*>& chnDatas,float* image, const Vec3i dims){
