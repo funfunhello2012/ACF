@@ -20,10 +20,12 @@ void testLoadUseCase(){
 	ACFDetector detector  =  loadDetectorFromMat("/home/edison/workspace/acfImplement/ACF/data/AcfInriaDetector.mat");
 //	ACFDetector detector  =  loadDetectorFromJson("");
 	vector<BoundingBox> bbs;
-//	Mat image = imread("./data/I00000.png");
+	Mat image = imread("./data/lena.jpg");
 //	Mat image(5,3,CV_32FC3);
-	Mat image(480,360,CV_32FC3);
+//	Mat image(480,360,CV_32FC3);
 	detector.detectImg(bbs,image);
+//	for(int i=0;i<bbs.size();i++)
+//		OUT(bbs[i]);
 }
 
 //class ChnCustom: public Chn{

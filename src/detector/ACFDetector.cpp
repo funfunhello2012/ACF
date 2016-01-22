@@ -260,16 +260,30 @@ void ACFDetector::detectImg(std::vector<BoundingBox>& bbs,cv::Mat image){
 	OUT_V(datas.size());
 	for(int i=0;i<datas.size();i++){
 		OUT("Detect one scale");
-		vector<BoundingBox> currentScales;
+		vector<BoundingBox> currentScalesRes;
 		vector<float*> currentData = datas[i];
-		vector<cv::Vec3i> currentChn = scaleSizes[i];
-		float* chnsInOne = (float*)currentData[0]; // copy the scale data into a float*
+		vector<cv::Vec3i> currentChnSizes = scaleSizes[i];
+		int totalChn = 0;
+		int chnH = currentChnSizes[0][0];
+		int chnW = currentChnSizes[0][1];
+		for(int k=0;k<currentChnSizes.size();k++)
+			totalChn+= currentChnSizes[k][2];
+
+		float* chnsInOne = new float[totalChn*chnH*chnW];
+		float* tmp = chnsInOne;
+
 
 		for(int j=0;j<currentData.size();j++){//free the memory here
-			OUT_V(currentChn[j]);
+			OUT_V(currentChnSizes[j]);
+			memcpy( tmp,currentData[j],sizeof(float)*chnH*chnW*currentChnSizes[j][2]);
+			tmp = tmp+chnH*chnW*currentChnSizes[j][2];
 			delete[] currentData[j]; //change the malloc to new
 		}
-//		detectOneScale(currentScales,)
+		detectOneScale(currentScalesRes,chnsInOne,chnH,chnW,totalChn);
+		OUT_V(_modelDsPad);
+		OUT_V(_modelDs);
+		OUT_V(_pyramid->getpad());
+
 	}
 }
 

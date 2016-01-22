@@ -24,6 +24,7 @@ private:
 public:
 	BoundingBox(float x,float y,float width,float height,float score):box(x,y,width,height),score(score){};
 	~BoundingBox(){};
+	friend std::ostream& operator<<(std::ostream&os ,const BoundingBox& d);
 };
 
 /**

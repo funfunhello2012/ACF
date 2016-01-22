@@ -63,3 +63,8 @@ Mat convertmat(float *ima,Size sz,int nch)
 
 	return Mat(sz.height, sz.width, CV_8UC(nch),B);
 }
+
+std::ostream& operator<<(std::ostream&os ,const BoundingBox& d){
+	os << "[x,y,w,h:score]" << d.box << ":" << d.score;
+}
+

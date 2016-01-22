@@ -7,13 +7,8 @@ using namespace std;
 
 void ColorChn::compute(float * const image,const cv::Vec3i dims){
 	OUT("ColorChn::compute");
-//	float* data = rgbConvert(image, dims[0]*dims[1],dims[2],0,1.0f); ;
-//	float* data = new float[dims[0]*dims[1]*dims[2]];
-//	for(int i=0;i<dims[0]*dims[1]*dims[2];i++){
-//		data[i] = i;
-//	}
-	float* data = rgbConvert(image, dims[0]*dims[1], dims[2],2, 1.0f/255) ;
-	this->chnData = data;
+//	float* data = rgbConvert(image, dims[0]*dims[1], dims[2],2, 1.0f/255) ;
+	this->chnData = image;
 	this->dims = Vec3i(dims[0],dims[1],dims[2]);
 }
 
@@ -45,8 +40,8 @@ void GradHistChn::compute(float * const image,const cv::Vec3i dims){
 
 	this->chnData = H;
 	this->dims = Vec3i(hb,wb,nChns);
-//	delete[] O;
-//	delete[] M;
+	delete[] O;
+	delete[] M;
 }
 
 void MagChn::compute(float * const image,const cv::Vec3i dims){

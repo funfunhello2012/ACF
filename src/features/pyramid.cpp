@@ -33,12 +33,17 @@ void getScales(float *&scaless,int &nScales,int nPerOct,int nOctUp,Size minDs,in
 	int d0=0,d1=0;
 	if(sz.width==0&&sz.height==0)
 		return ;
-	int tmp=(sz.width/minDs.width)<(sz.height/minDs.height)?(sz.width/minDs.width):(sz.height/minDs.height);
+//	int tmp=(sz.width/minDs.width)<(sz.height/minDs.height)?(sz.width/minDs.width):(sz.height/minDs.height);
+	float tmp=(float)sz.width/minDs.width;
+	float tmp2=(float)sz.height/minDs.height;
+	if(tmp>tmp2)
+		tmp=tmp2;
 	nScales=(int)floor(nPerOct*(nOctUp+log10((double)tmp)/log10((double)2))+1);
 	scales=(float *)malloc(nScales*sizeof(float));
 	for(int i=0;i<nScales;i++)
 	{
 		scales[i]=(float)pow(2,(((float)-i/nPerOct)+nOctUp));
+		OUT_V(scales[i]);
 		//cout<<scales[i]<<endl;
 	}
 	
@@ -81,7 +86,8 @@ void getScales(float *&scaless,int &nScales,int nPerOct,int nOctUp,Size minDs,in
 	if(scales[0]>1)scales[0]=1;
 	//for(int i=0;i<nScales;i++)
 		//cout<<scales[i]<<endl;
-	bool *kp=(bool *)malloc(nScales*sizeof(bool));
+//	bool *kp=(bool *)malloc(nScales*sizeof(bool));
+	bool kp[nScales];
 	int num=0;
 	for(int i=0;i<nScales-1;i++)
 	{
@@ -94,7 +100,7 @@ void getScales(float *&scaless,int &nScales,int nPerOct,int nOctUp,Size minDs,in
 		}
 		//cout<<kp[i]<<endl;
 	}
-	kp[nScales]=true;
+	kp[nScales-1]=true;
 	nScales=nScales-num;
 	scaless=(float *)malloc(nScales*sizeof(float));
 	for(int i=0,j=0;i<nScales+num;i++)
@@ -148,7 +154,9 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 	*/
 
 	// convert image to LUV
-	float* imgData = matconvert( image);
+	float* originData = matconvert( image);
+	float* imgData = rgbConvert(originData, size.height*size.width, image.channels(),2, 1.0f/255) ;//2 is flag->luv
+	delete []originData;
 
 	OUT_V(nPerOct);
 	OUT_V(nOctUp);
@@ -159,6 +167,8 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 
 	// get scales at which to compute features and list of real/approx scales
 	getScales(scales,nScales,nPerOct, nOctUp,minDs,4,size);
+	for(int i=0;i<nScales;i++)
+		OUT_V(scales[i]);
 	OUT_V(nScales);
 	data=vector<vector <float*>>(nScales,vector<float*>(ntypes));
 	dataSizes = vector<vector<Vec3i> >(nScales,vector<Vec3i>(ntypes));
