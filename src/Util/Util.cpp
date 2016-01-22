@@ -14,54 +14,47 @@ using namespace cv;
  */
 float * matconvert(Mat image)
 {
-
-	int k=0;
 	int m=image.rows*image.cols*image.channels();
-	uchar* A=(uchar*)malloc(m*sizeof(uchar));
-	for(int i=0;i<image.rows;i++)
-	{
-		uchar *p=image.ptr<uchar>(i);
-		for(int j=0;j<image.cols*image.channels();j++)
-			A[k++]=(uchar)p[j];
-
-	}
-	float *A1 = (float*)malloc(m*sizeof(float));
-	int idx = 0;
-
-	//here OpenCV store data as BGR and matlab store as RGB
-	for(int ch=image.channels()-1; ch>=0; ch--){
-		for(int r=0;r<m;){
-				A1[idx++]=(float)A[r+ch];
-				r = r+3;
+	float* result = new float[m];
+	int idx=0;
+	for(int c = image.channels()-1;c>=0;c--){
+		for(int i=0;i<image.cols;i++){
+			for(int j=0;j<image.rows;j++){
+				result[idx++] = (float)image.at<Vec3b>(j,i)[c];
+			}
 		}
 	}
-	return A1;
+	return result;
 }
 
-/**
- * convert the pointer to matlab data  OpenCV mat
- */
-Mat convertmat(float *ima,Size sz,int nch)
+
+Mat convertmat(float *image,Size sz,int nch)
 {
 	int m=sz.height*sz.width*nch;
-	uchar *B=(uchar*)malloc(m*sizeof(uchar));
-	int off =sz.height*sz.width;
+	uchar* matData = new uchar[m];
+	int off = sz.height*sz.width;
 	int idx = 0;
 	switch(nch){
 	case 1:
-		for(int i=0;i<off;i++)
-				B[idx++] = (uchar)(ima[i]+0.5);
+		for(int h=0;h<sz.height;h++){
+			for(int w=0;w<sz.width;w++){
+				int hoff = w*sz.height+h;
+				matData[idx++] = (uchar)image[hoff];
+			}
+		}
 		break;
 	case 3:
-		for(int i=0;i<off;i++){
-				B[idx++]=(uchar)(ima[i+2*off]+0.5);
-				B[idx++] = (uchar)(ima[i+off]+0.5);
-				B[idx++] = (uchar)(ima[i]+0.5);
+		for(int h=0;h<sz.height;h++){
+			for(int w=0;w<sz.width;w++){
+				int hoff = w*sz.height+h;
+				matData[idx++] = (uchar)image[hoff+2*off];
+				matData[idx++] = (uchar)image[hoff+off];
+				matData[idx++] = (uchar)image[hoff];
+			}
 		}
 		break;
 	}
-
-	return Mat(sz.height, sz.width, CV_8UC(nch),B);
+	return Mat(sz.height, sz.width, CV_8UC(nch),matData);
 }
 
 std::ostream& operator<<(std::ostream&os ,const BoundingBox& d){

@@ -133,9 +133,6 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 //	OUT("Getting data from ChnsManager");
 //	data.push_back(chnsData);
 
-	image = image.t(); // for using the matlab mex
-	minDs = Size(minDs.height,minDs.width);
-	pad = Size(pad.height,pad.width);
 
 	int shrink=this->chnsmanager->getShrink();
 	OUT_V(shrink);
