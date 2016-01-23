@@ -4,6 +4,7 @@
 
 #include "../../Util/common.h"
 
+#include "mex/imResampleMex.hpp"
 #include "mex/convConst.hpp"
 #include "mex/rgbConvertMex.hpp"
 #include "mex/gradientMex.hpp"
@@ -63,6 +64,7 @@ public:
 			strcpy(name,  "color channels");
 			padType = REPLICATE;
 	}
+	~ColorChn();
 	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	// %   .pColor       - parameters for color space:
 	// %     .enabled      - [1] if true enable color channels
@@ -103,6 +105,7 @@ public:
 		Chn(nO), binSize(binS),nOrients(nO),softBin(softB),clipHog(cH),useHog(useH){
 			strcpy(name,  "gradient histogram");
 	}
+	~GradHistChn();
 //	GradHistChn(Mat img, int _nOrients = 6) :
 //		Chn(img), binSize(8), nOrients(_nOrients),softBin(0), clipHog(.2){
 //			strcpy(name,  "Gradient Histogram Channels");
@@ -168,6 +171,7 @@ public:
 		Chn(1), colorChnUsed(colorUsed),normRad(normR),normConst(normC),full(f){
 			strcpy(name,  "gradient magnitude");
 	}
+	~MagChn();
 	void compute(float * const image,const cv::Vec3i dims);
 	int getChnNum(){return numChns;}
 	cv::Vec3i getChnDims(){return dims;}

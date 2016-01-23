@@ -8,8 +8,14 @@ using namespace std;
 void ColorChn::compute(float * const image,const cv::Vec3i dims){
 	OUT("ColorChn::compute");
 //	float* data = rgbConvert(image, dims[0]*dims[1], dims[2],2, 1.0f/255) ;
-	this->chnData = image;
+	float* data = new float[dims[0]*dims[1]*dims[2]];
+	memcpy(data,image,sizeof(float)*dims[0]*dims[1]*dims[2]);
+	this->chnData = data;
 	this->dims = Vec3i(dims[0],dims[1],dims[2]);
+}
+
+ColorChn::~ColorChn(){
+	delete []chnData;
 }
 
 void GradHistChn::compute(float * const image,const cv::Vec3i dims){
@@ -44,6 +50,10 @@ void GradHistChn::compute(float * const image,const cv::Vec3i dims){
 	delete[] M;
 }
 
+GradHistChn::~GradHistChn(){
+	delete[]chnData;
+}
+
 void MagChn::compute(float * const image,const cv::Vec3i dims){
 	OUT("MagChn::compute");
 
@@ -66,6 +76,10 @@ void MagChn::compute(float * const image,const cv::Vec3i dims){
 	delete convRes;
 }
 
+MagChn::~MagChn(){
+	delete []chnData;
+}
+
 void ChnsManager::compute(std::vector<float*>& chnDatas,float* image, const Vec3i dims){
 	OUT("ChnsManager::compute");
 	int shrink = this->shrink;//this should be set through constructor
@@ -73,15 +87,17 @@ void ChnsManager::compute(std::vector<float*>& chnDatas,float* image, const Vec3
 	int h = dims[0]/shrink;
 	int w = dims[1]/shrink;
 	for(int i=0;i<chns.size();i++){
-		OUT_V(chns.size());
 		if(chns[i]->isEnabled()){//compute if the channel is enabled
-			Vec3i outChnSz =Vec3i(h, w,chns[i]->getChnNum());
+			int nChns = chns[i]->getChnNum();
+			Vec3i outChnSz =Vec3i(h, w,nChns);
 			this->chnSize[i] = outChnSz;
 			chns[i]->compute(image,dims);
 			Vec3i chnDims = chns[i]->getChnDims();
 			//if(chnDims[0]!=outChnSz[0] || chnDims[1]!=outChnSz[1]) //resample the data here
 				//imResampleMex(chns[i]->data())
-			chnDatas.push_back(chns[i]->data());
+			float* chnDataOut = new float[h*w*nChns];
+			resample((float*)chns[i]->data(), (float*)chnDataOut, chnDims[0], h, chnDims[1], w, nChns,1.0f);
+			chnDatas.push_back(chnDataOut);
 		}
 	}
 }

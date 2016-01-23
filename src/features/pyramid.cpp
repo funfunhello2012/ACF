@@ -202,6 +202,7 @@ void Pyramid:: computeData(Mat& image,vector<vector <float*> >& data, vector<vec
 		float* I1 = new float[sz1.height*sz1.width*image.channels()*sizeof(float)];
 		if(size.height==sz1.height&&size.width==size.width)
 		{
+			delete[] I1;
 			I1=imgData;
 		}
 		else
