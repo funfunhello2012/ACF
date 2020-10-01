@@ -28,7 +28,7 @@ void testLoadUseCase(){
 
 //class ChnCustom: public Chn{
 //public:
-//	void compute(float * const image,const cv::Vec3i dims){
+//	void compute(float * const image,const cv::Vec3i dims){ //public function
 //		OUT("Custom compute");
 //	}
 //};
@@ -42,7 +42,7 @@ void testTrainTestUseCase(){
 	Pyramid* pyramid = detector.getPyramid();
 //	Chn* chn  = new ChnCustom();
 //	chnsManager->addChn(chn);
-	vector<vector<Mat> > datas;
+	vector<vector<Mat> > datas;//vector class 
 //	pyramid->computeData(img,datas);
 	detector.train();
 	detector.test();
